@@ -318,30 +318,9 @@ html, body {
 .tt-incant::after  { content: "”"; }
 .tt-incant:empty { display: none; }
 
-/* ---- Footer hint ----------------------------------------------------- */
-
-#hint {
-  position: fixed;
-  left: 50%;
-  bottom: max(18px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 3;
-  margin: 0;
-  font-family: "Cinzel", serif;
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(233, 220, 195, 0.4);
-  text-align: center;
-  pointer-events: none;
-  transition: opacity 0.8s ease;
-}
-#sigil.has-active ~ #hint { opacity: 0; }
-
 @media (max-width: 560px) {
   .ring-text { font-size: 30px; letter-spacing: 3px; }
   #tooltip { max-width: 200px; }
-  #hint { font-size: 10px; letter-spacing: 2px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
