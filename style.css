@@ -1,0 +1,349 @@
+/* =========================================================================
+   Vegvísir — a wayfinder for the road
+   Aesthetic: ancient weathered space viking · Guardians-of-the-Galaxy colors
+   ========================================================================= */
+
+:root {
+  --space-0: #060314;
+  --space-1: #0e0824;
+  --space-2: #170b34;
+
+  --magenta: #ff2d95;
+  --pink:    #ff5db1;
+  --cyan:    #23e0d4;
+  --teal:    #12d1c0;
+  --purple:  #8a4dff;
+  --orange:  #ff8a1e;
+  --gold:    #f5c542;
+  --blue:    #3f7bff;
+
+  --bronze:      #c9a24e;
+  --bronze-lite: #f4d98a;
+  --patina:      #3aa38f;
+
+  --parchment: #e9dcc3;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(120% 120% at 50% 30%, #12082a 0%, #08041a 45%, #030109 100%);
+  color: var(--parchment);
+  font-family: "Cinzel", "Trajan Pro", Georgia, serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Deep-space backdrop --------------------------------------------- */
+
+#stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.nebula {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: drift 34s ease-in-out infinite alternate;
+}
+.neb-a {
+  width: 60vmax; height: 60vmax;
+  left: -12vmax; top: -18vmax;
+  background: radial-gradient(circle, var(--magenta), transparent 62%);
+}
+.neb-b {
+  width: 66vmax; height: 66vmax;
+  right: -18vmax; bottom: -22vmax;
+  background: radial-gradient(circle, var(--cyan), transparent 62%);
+  animation-delay: -8s;
+}
+.neb-c {
+  width: 44vmax; height: 44vmax;
+  right: 8vmax; top: -14vmax;
+  background: radial-gradient(circle, var(--orange), transparent 60%);
+  opacity: 0.4;
+  animation-delay: -16s;
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(3vmax, 4vmax, 0) scale(1.12); }
+}
+
+/* Fine film grain for the "weathered / ancient" feel */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Stage ----------------------------------------------------------- */
+
+#stage {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: env(safe-area-inset-top) 0 0;
+}
+
+#sigil {
+  width: min(94vmin, 900px);
+  height: min(94vmin, 900px);
+  overflow: visible;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Framing rings & runic band -------------------------------------- */
+
+.frame-ring {
+  fill: none;
+  stroke: var(--bronze);
+  stroke-opacity: 0.32;
+  stroke-width: 1.4;
+  filter: drop-shadow(0 0 3px rgba(35, 224, 212, 0.25));
+}
+
+#ring {
+  transform-box: view-box;
+  transform-origin: 500px 500px;
+  animation: spin 78s linear infinite;
+}
+#ringInner {
+  transform-box: view-box;
+  transform-origin: 500px 500px;
+  animation: spin 120s linear infinite reverse;
+}
+#sigil.playing #ring     { animation-duration: 46s; }
+#sigil.playing #ringInner { animation-duration: 82s; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ring-text {
+  fill: var(--bronze-lite);
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  font-size: 27px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 6px rgba(255, 45, 149, 0.5));
+  transition: fill 0.6s ease;
+}
+#sigil.playing .ring-text { fill: #fff0d0; }
+
+.ring-text-inner {
+  fill: var(--cyan);
+  font-family: "Cinzel", serif;
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  fill-opacity: 0.55;
+  filter: drop-shadow(0 0 5px rgba(35, 224, 212, 0.5));
+}
+
+/* ---- The eight arms -------------------------------------------------- */
+
+#arms { filter: url(#weather); }
+
+.arm {
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+.arm .stave {
+  fill: none;
+  stroke: url(#bronzeGrad);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.6));
+  transition: stroke 0.35s ease, filter 0.35s ease;
+}
+.arm .hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 92;
+  stroke-linecap: round;
+}
+
+/* When another arm is chosen, dim the rest */
+#sigil.has-active .arm { opacity: 0.42; }
+
+.arm.hovered .stave,
+.arm.active  .stave {
+  stroke: var(--accent);
+  filter:
+    drop-shadow(0 0 5px var(--accent))
+    drop-shadow(0 0 16px var(--accent));
+}
+.arm.hovered { opacity: 1 !important; }
+.arm.active  { opacity: 1 !important; }
+.arm.active .stave { stroke-width: 8.5; }
+
+/* ---- The core player ------------------------------------------------- */
+
+#core { cursor: pointer; }
+
+.core-halo {
+  fill: none;
+  stroke: var(--magenta);
+  stroke-width: 2;
+  stroke-opacity: 0.35;
+  filter: drop-shadow(0 0 16px rgba(255, 45, 149, 0.55));
+}
+.core-disc {
+  filter: drop-shadow(0 0 22px rgba(10, 5, 25, 0.9));
+}
+.core-rim {
+  fill: none;
+  stroke: url(#bronzeGrad);
+  stroke-width: 4;
+  filter: drop-shadow(0 0 6px rgba(35, 224, 212, 0.4));
+}
+
+#progressTrack {
+  fill: none;
+  stroke: rgba(233, 220, 195, 0.14);
+  stroke-width: 6;
+}
+#progressBar {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 7px var(--cyan));
+  transition: stroke 0.5s ease;
+}
+#sigil.has-active #progressBar { stroke: var(--active-accent, var(--cyan)); }
+
+#glyph path,
+#glyph rect {
+  fill: var(--parchment);
+  filter: drop-shadow(0 0 8px rgba(255, 240, 208, 0.55));
+  transition: fill 0.3s ease;
+}
+#core:hover #glyph path,
+#core:hover #glyph rect { fill: #fff; }
+
+/* Toggle play vs pause icon */
+#glyphPause { display: none; }
+#sigil.playing #glyphPlay  { display: none; }
+#sigil.playing #glyphPause { display: block; }
+
+/* Gentle breathing pulse on the core when idle */
+#core .core-halo { animation: breathe 5.5s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { stroke-opacity: 0.25; }
+  50%      { stroke-opacity: 0.6; }
+}
+
+#coreElapsed {
+  fill: var(--bronze-lite);
+  fill-opacity: 0.7;
+  font-family: "Cinzel", serif;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+/* ---- Tooltip: an arm's "magic" --------------------------------------- */
+
+#tooltip {
+  position: fixed;
+  z-index: 6;
+  max-width: 240px;
+  padding: 14px 18px;
+  border: 1px solid rgba(201, 162, 78, 0.5);
+  border-radius: 3px;
+  background: linear-gradient(160deg, rgba(20, 10, 40, 0.94), rgba(8, 4, 20, 0.94));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 10px 40px rgba(0, 0, 0, 0.7),
+    0 0 26px var(--accent, rgba(255, 45, 149, 0.4));
+  transform: translate(-50%, -50%) scale(0.92);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  text-align: center;
+  backdrop-filter: blur(2px);
+}
+#tooltip.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.tt-index {
+  font-family: "Cinzel Decorative", "Cinzel", serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--accent, var(--cyan));
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.tt-name {
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 2px;
+  color: var(--bronze-lite);
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+.tt-incant {
+  margin-top: 8px;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(233, 220, 195, 0.82);
+}
+.tt-incant::before { content: "“"; }
+.tt-incant::after  { content: "”"; }
+.tt-incant:empty { display: none; }
+
+/* ---- Footer hint ----------------------------------------------------- */
+
+#hint {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 3;
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(233, 220, 195, 0.4);
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+#sigil.has-active ~ #hint { opacity: 0; }
+
+@media (max-width: 560px) {
+  .ring-text { font-size: 30px; letter-spacing: 3px; }
+  #tooltip { max-width: 200px; }
+  #hint { font-size: 10px; letter-spacing: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #ring, #ringInner, .nebula, #core .core-halo { animation: none; }
+}

@@ -1,0 +1,304 @@
+/* =========================================================================
+   Vegvísir — a wayfinder for the road
+   -------------------------------------------------------------------------
+   HOW TO FILL IN THE MIXTAPE
+   Each of the eight arms below is one song. Edit the `song` block:
+     • drop the audio file into  audio/  (any name you like)
+     • point `file` at it
+     • fill title / artist / album / year  → these ride the rotating rings
+   The `name` + `incant` are the "magic" shown when you hover an arm.
+   The arms are placed clockwise starting at the top (12 o'clock).
+   ========================================================================= */
+
+const SIGIL = [
+  { name: "Signal",   incant: "the thread through noise",        accent: "#23e0d4",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/1-signal.mp3" } },
+
+  { name: "Drift",    incant: "the unplanned route",             accent: "#8a4dff",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/2-drift.mp3" } },
+
+  { name: "Spark",    incant: "invention · ignition · him",      accent: "#ff8a1e",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/3-spark.mp3" } },
+
+  { name: "Mischief", incant: "trickster door · you",            accent: "#ff2d95",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/4-mischief.mp3" } },
+
+  { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/5-storm.mp3" } },
+
+  { name: "Haven",    incant: "rest · warmth · quiet holding",   accent: "#f5c542",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/6-haven.mp3" } },
+
+  { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/7-crossing.mp3" } },
+
+  { name: "Return",   incant: "re-entry · the path back",        accent: "#ff5db1",
+    song: { title: "", artist: "", album: "", year: "", file: "audio/8-return.mp3" } },
+];
+
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+
+/* ---- Arm geometry ---------------------------------------------------- *
+ * Everything is drawn pointing "up" from the core, then the whole <g> is
+ * rotated into place. Up = decreasing y in SVG space.                    */
+
+const CX = 500, CY = 500;
+const SPOKE_IN = 274;   // inner end of the stave (just outside the core)
+const SPOKE_OUT = 138;  // stave tip (just inside the inner frame ring)
+
+// A distinct rune-terminal for each arm tip (drawn near y≈138, pointing up).
+const TERMINALS = [
+  "M474,168 L500,168 526,132 M474,132 L500,168 M500,138 L500,108",           // trident
+  "M500,168 L472,118 M500,168 L500,102 M500,168 L528,118",                    // ᛉ splayed fork
+  "M500,152 m-21,0 a21,21 0 1,0 42,0 a21,21 0 1,0 -42,0 M500,131 L500,104",   // ring finial
+  "M470,150 L530,150 M477,127 L523,127 M500,127 L500,102",                    // double bar + point
+  "M500,102 L521,138 L500,174 L479,138 Z",                                    // diamond finial
+  "M500,150 Q500,118 474,112 M500,150 Q500,118 526,112",                      // twin hooks
+  "M478,150 L500,123 522,150 M478,127 L500,100 522,127",                      // stacked chevrons
+  "M470,146 L530,146 M481,120 L519,120 M500,174 L500,96",                     // cross-crosslet
+];
+
+// Rune tick-marks along each stave — varied for an organic, etched feel.
+const TICKS = [
+  [[250, 13], [206, 10]],
+  [[256, 11], [220, 14], [184, 10]],
+  [[246, 13], [200, 10]],
+  [[258, 10], [222, 13], [186, 11]],
+  [[250, 12], [208, 15]],
+  [[256, 11], [218, 13], [182, 10]],
+  [[248, 14], [204, 10]],
+  [[254, 11], [220, 13], [186, 10]],
+];
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+function buildStavePath(i) {
+  let d = `M${CX},${SPOKE_IN} L${CX},${SPOKE_OUT}`;          // main spoke
+  for (const [y, w] of TICKS[i]) d += ` M${CX - w},${y} L${CX + w},${y}`;
+  d += " " + TERMINALS[i];
+  return d;
+}
+
+/* ---- Build the eight arms ------------------------------------------- */
+
+const armsGroup = document.getElementById("arms");
+const svg = document.getElementById("sigil");
+
+SIGIL.forEach((arm, i) => {
+  const g = document.createElementNS(SVGNS, "g");
+  g.setAttribute("class", "arm");
+  g.setAttribute("transform", `rotate(${i * 45} ${CX} ${CY})`);
+  g.style.setProperty("--accent", arm.accent);
+  g.dataset.index = i;
+
+  const hit = document.createElementNS(SVGNS, "path");
+  hit.setAttribute("class", "hit");
+  hit.setAttribute("d", `M${CX},${SPOKE_IN + 8} L${CX},${SPOKE_OUT - 14}`);
+
+  const stave = document.createElementNS(SVGNS, "path");
+  stave.setAttribute("class", "stave");
+  stave.setAttribute("d", buildStavePath(i));
+
+  g.append(hit, stave);
+  armsGroup.append(g);
+
+  g.addEventListener("pointerenter", () => showTooltip(i));
+  g.addEventListener("pointerleave", () => hideTooltip(i));
+  g.addEventListener("click", () => selectArm(i));
+});
+
+/* ---- Tooltip: an arm's "magic" -------------------------------------- */
+
+const tooltip = document.getElementById("tooltip");
+const ttIndex = tooltip.querySelector(".tt-index");
+const ttName = tooltip.querySelector(".tt-name");
+const ttIncant = tooltip.querySelector(".tt-incant");
+
+function armScreenPoint(i, r) {
+  const a = (i * 45) * Math.PI / 180;
+  const p = svg.createSVGPoint();
+  p.x = CX + r * Math.sin(a);
+  p.y = CY - r * Math.cos(a);
+  return p.matrixTransform(svg.getScreenCTM());
+}
+
+function showTooltip(i) {
+  const arm = SIGIL[i];
+  document.querySelector(`.arm[data-index="${i}"]`).classList.add("hovered");
+  ttIndex.textContent = ROMAN[i];
+  ttName.textContent = arm.name;
+  ttIncant.textContent = arm.incant;
+  tooltip.style.setProperty("--accent", arm.accent);
+
+  const pt = armScreenPoint(i, 332);
+  tooltip.style.left = pt.x + "px";
+  tooltip.style.top = pt.y + "px";
+  tooltip.classList.add("show");
+}
+
+function hideTooltip(i) {
+  document.querySelector(`.arm[data-index="${i}"]`).classList.remove("hovered");
+  tooltip.classList.remove("show");
+}
+
+/* ---- Rotating metadata rings ---------------------------------------- */
+
+const ringText = document.getElementById("ringText");
+const ringTextInner = document.getElementById("ringTextInner");
+const SEP = "  ✦  "; // ✦
+
+function repeatToLength(unit, minLen) {
+  let s = "";
+  while (s.length < minLen) s += unit;
+  return s;
+}
+
+function ringStrings(i) {
+  if (i == null) {
+    return {
+      outer: repeatToLength("VEGVÍSIR" + SEP + "WAYFINDER" + SEP + "CHOOSE YOUR PATH" + SEP, 150),
+      inner: repeatToLength("the way is shown" + SEP, 90),
+    };
+  }
+  const s = SIGIL[i].song;
+  const title = s.title || SIGIL[i].name;
+  const outerParts = [title];
+  const innerParts = [];
+  if (s.artist) innerParts.push(s.artist);
+  if (s.album) innerParts.push(s.album);
+  if (s.year) innerParts.push(s.year);
+  if (!innerParts.length) innerParts.push(SIGIL[i].incant);
+
+  return {
+    outer: repeatToLength(outerParts.join(SEP) + SEP, 150),
+    inner: repeatToLength(innerParts.join(SEP) + SEP, 90),
+  };
+}
+
+function updateRings(i) {
+  const { outer, inner } = ringStrings(i);
+  ringText.textContent = outer;
+  ringTextInner.textContent = inner;
+}
+updateRings(null);
+
+/* ---- The core player ------------------------------------------------ */
+
+const player = document.getElementById("player");
+const progressBar = document.getElementById("progressBar");
+const coreElapsed = document.getElementById("coreElapsed");
+const hint = document.getElementById("hint");
+
+const R_PROG = 130;
+const CIRC = 2 * Math.PI * R_PROG;
+progressBar.style.strokeDasharray = CIRC;
+progressBar.style.strokeDashoffset = CIRC;
+
+let current = null;
+
+function selectArm(i) {
+  current = i;
+  svg.classList.add("has-active");
+  svg.style.setProperty("--active-accent", SIGIL[i].accent);
+
+  document.querySelectorAll(".arm").forEach((el) =>
+    el.classList.toggle("active", +el.dataset.index === i));
+
+  updateRings(i);
+  progressBar.style.strokeDashoffset = CIRC;
+
+  player.src = SIGIL[i].song.file;
+  player.play().catch(() => {
+    /* Audio file not present yet — the sigil still lights up and the rings
+       carry the song's name. Drop the file into audio/ to hear it. */
+  });
+}
+
+function togglePlay() {
+  if (current == null) { selectArm(0); return; }   // press the core to begin the journey
+  if (player.paused) player.play().catch(() => {});
+  else player.pause();
+}
+
+function fmt(t) {
+  if (!isFinite(t)) return "—";
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+const core = document.getElementById("core");
+core.addEventListener("click", togglePlay);
+core.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); }
+});
+
+player.addEventListener("play", () => svg.classList.add("playing"));
+player.addEventListener("pause", () => svg.classList.remove("playing"));
+
+player.addEventListener("timeupdate", () => {
+  const dur = player.duration;
+  if (isFinite(dur) && dur > 0) {
+    progressBar.style.strokeDashoffset = CIRC * (1 - player.currentTime / dur);
+    coreElapsed.textContent = `${fmt(player.currentTime)} · ${fmt(dur)}`;
+  }
+});
+
+player.addEventListener("ended", () => {
+  svg.classList.remove("playing");
+  selectArm((current + 1) % SIGIL.length);   // Return loops back to Signal — the circle closes
+});
+
+/* ---- Keyboard: space toggles, arrows walk the arms ------------------ */
+
+document.addEventListener("keydown", (e) => {
+  if (e.target === core) return;
+  if (e.key === " ") { e.preventDefault(); togglePlay(); }
+  else if (e.key === "ArrowRight") selectArm(current == null ? 0 : (current + 1) % SIGIL.length);
+  else if (e.key === "ArrowLeft")  selectArm(current == null ? 0 : (current + SIGIL.length - 1) % SIGIL.length);
+});
+
+/* ---- Starfield backdrop --------------------------------------------- */
+
+(function starfield() {
+  const canvas = document.getElementById("stars");
+  const ctx = canvas.getContext("2d");
+  let w, h, stars;
+
+  function seed() {
+    w = canvas.width = innerWidth;
+    h = canvas.height = innerHeight;
+    const count = Math.min(320, Math.floor((w * h) / 6000));
+    stars = Array.from({ length: count }, (_, k) => ({
+      x: (Math.sin(k * 12.9898) * 43758.5453 % 1 + 1) % 1 * w,
+      y: (Math.sin(k * 78.233) * 12543.988 % 1 + 1) % 1 * h,
+      r: ((Math.sin(k * 3.17) + 1) / 2) * 1.4 + 0.2,
+      tw: ((Math.sin(k * 5.71) + 1) / 2) * 0.9 + 0.1,
+      hue: [255, 210, 320][k % 3], // pink-ish / gold-ish / magenta-ish twinkles
+    }));
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (const s of stars) {
+      const a = 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(t * s.tw + s.x));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${s.hue}, 80%, 85%, ${a})`;
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = `hsla(${s.hue}, 90%, 70%, ${a})`;
+      ctx.fill();
+    }
+  }
+  function frame() {
+    t += 0.012;
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  seed();
+  addEventListener("resize", () => { seed(); draw(); });
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) draw();
+  else frame();
+})();

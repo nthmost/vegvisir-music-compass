@@ -1,0 +1,6 @@
+# The mixtape itself is personal content, not code — deployed to the server
+# separately (scp), never committed. Keep audio/README.txt tracked.
+audio/*
+!audio/README.txt
+
+.DS_Store
