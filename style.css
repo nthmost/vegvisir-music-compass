@@ -269,25 +269,38 @@ html, body {
   position: fixed;
   inset: 0;
   z-index: 4;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 0 6vw;
+  padding: 0 5vw;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.5s ease;
 }
 #magic.show { opacity: 1; }
 
+/* Fixed-width box so the incantation wraps predictably and the name has a
+   definite width to be scaled against (see fitName() in app.js). */
+.magic-inner {
+  width: 90vw;
+  max-width: 62rem;
+}
+
 .magic-name {
   font-family: "Cinzel", serif;
   font-weight: 800;
-  font-size: clamp(3.5rem, 21vmin, 15rem);
+  display: inline-block;   /* hug the text so its width is measurable for fitName() */
+  white-space: nowrap;
+  /* width-based (vw) so the longest names — MISCHIEF, CROSSING — always
+     fit a phone's width; capped so it stays bold-but-not-huge on desktop */
+  font-size: clamp(2.75rem, 13vw, 11rem);
   line-height: 0.9;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--accent, var(--bronze-lite));
-  opacity: 0.16;
+  opacity: 0.32;
   mix-blend-mode: screen;
   filter: drop-shadow(0 0 42px var(--accent, transparent));
   transform: scale(0.96);
@@ -299,11 +312,12 @@ html, body {
   margin-top: 0.7em;
   font-family: Georgia, serif;
   font-style: italic;
+  max-width: 88vw;
   font-size: clamp(0.9rem, 3vmin, 1.7rem);
-  letter-spacing: 0.35em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--accent, var(--bronze-lite));
-  opacity: 0.55;
+  opacity: 0.8;
   filter: drop-shadow(0 0 14px var(--accent, transparent));
 }
 .magic-incant:empty { display: none; }

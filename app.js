@@ -108,8 +108,22 @@ SIGIL.forEach((arm, i) => {
 /* ---- An arm's "magic": watermark text ghosting in on hover ---------- */
 
 const magic = document.getElementById("magic");
+const magicInner = magic.querySelector(".magic-inner");
 const magicName = magic.querySelector(".magic-name");
 const magicIncant = magic.querySelector(".magic-incant");
+
+// Shrink a name to fit its box when it's wider than the space (long words like
+// MISCHIEF / CROSSING on a narrow phone). CSS sizing alone can't guarantee this
+// across font metrics, so measure and scale down only when it actually overflows.
+function fitName() {
+  magicName.style.fontSize = "";
+  const avail = magicInner.clientWidth;
+  const w = magicName.offsetWidth;   // inline-block hugs the text, so this is its true width
+  if (w > avail) {
+    const px = parseFloat(getComputedStyle(magicName).fontSize);
+    magicName.style.fontSize = (px * avail / w * 0.99) + "px";
+  }
+}
 
 function showMagic(i) {
   const arm = SIGIL[i];
@@ -117,6 +131,7 @@ function showMagic(i) {
   magicName.textContent = arm.name;
   magicIncant.textContent = arm.incant;
   magic.style.setProperty("--accent", arm.accent);
+  fitName();
   magic.classList.add("show");
 }
 
@@ -124,6 +139,9 @@ function hideMagic(i) {
   document.querySelector(`.arm[data-index="${i}"]`).classList.remove("hovered");
   magic.classList.remove("show");
 }
+
+// Re-fit if the viewport changes while a name is showing (orientation flip).
+addEventListener("resize", () => { if (magic.classList.contains("show")) fitName(); });
 
 /* ---- Rotating metadata rings ---------------------------------------- */
 
