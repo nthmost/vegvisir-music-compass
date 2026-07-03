@@ -263,60 +263,50 @@ html, body {
   letter-spacing: 3px;
 }
 
-/* ---- Tooltip: an arm's "magic" --------------------------------------- */
+/* ---- An arm's "magic": watermark text ghosting in on hover ----------- */
 
-#tooltip {
+#magic {
   position: fixed;
-  z-index: 6;
-  max-width: 240px;
-  padding: 14px 18px;
-  border: 1px solid rgba(201, 162, 78, 0.5);
-  border-radius: 3px;
-  background: linear-gradient(160deg, rgba(20, 10, 40, 0.94), rgba(8, 4, 20, 0.94));
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.4),
-    0 10px 40px rgba(0, 0, 0, 0.7),
-    0 0 26px var(--accent, rgba(255, 45, 149, 0.4));
-  transform: translate(-50%, -50%) scale(0.92);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
   text-align: center;
-  backdrop-filter: blur(2px);
+  padding: 0 6vw;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
-#tooltip.show {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-.tt-index {
-  font-family: "Cinzel Decorative", "Cinzel", serif;
-  font-size: 12px;
-  letter-spacing: 4px;
-  color: var(--accent, var(--cyan));
-  text-transform: uppercase;
-  opacity: 0.85;
-  margin-bottom: 4px;
-}
-.tt-name {
+#magic.show { opacity: 1; }
+
+.magic-name {
   font-family: "Cinzel", serif;
   font-weight: 800;
-  font-size: 19px;
-  letter-spacing: 2px;
-  color: var(--bronze-lite);
+  font-size: clamp(3.5rem, 21vmin, 15rem);
+  line-height: 0.9;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  line-height: 1.15;
+  color: var(--accent, var(--bronze-lite));
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 42px var(--accent, transparent));
+  transform: scale(0.96);
+  transition: transform 0.5s ease;
 }
-.tt-incant {
-  margin-top: 8px;
+#magic.show .magic-name { transform: scale(1); }
+
+.magic-incant {
+  margin-top: 0.7em;
   font-family: Georgia, serif;
   font-style: italic;
-  font-size: 14px;
-  line-height: 1.5;
-  color: rgba(233, 220, 195, 0.82);
+  font-size: clamp(0.9rem, 3vmin, 1.7rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent, var(--bronze-lite));
+  opacity: 0.55;
+  filter: drop-shadow(0 0 14px var(--accent, transparent));
 }
-.tt-incant::before { content: "“"; }
-.tt-incant::after  { content: "”"; }
-.tt-incant:empty { display: none; }
+.magic-incant:empty { display: none; }
 
 @media (max-width: 560px) {
   .ring-text { font-size: 30px; letter-spacing: 3px; }

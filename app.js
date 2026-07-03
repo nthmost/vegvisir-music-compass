@@ -17,10 +17,10 @@ const SIGIL = [
   { name: "Drift",    incant: "the unplanned route",             accent: "#8a4dff",
     song: { title: "", artist: "", album: "", year: "", file: "audio/2-drift.mp3" } },
 
-  { name: "Spark",    incant: "invention · ignition · him",      accent: "#ff8a1e",
+  { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
     song: { title: "", artist: "", album: "", year: "", file: "audio/3-spark.mp3" } },
 
-  { name: "Mischief", incant: "trickster door · you",            accent: "#ff2d95",
+  { name: "Mischief", incant: "trickster door",                 accent: "#ff2d95",
     song: { title: "", artist: "", album: "", year: "", file: "audio/4-mischief.mp3" } },
 
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
@@ -35,8 +35,6 @@ const SIGIL = [
   { name: "Return",   incant: "re-entry · the path back",        accent: "#ff5db1",
     song: { title: "", artist: "", album: "", year: "", file: "audio/8-return.mp3" } },
 ];
-
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 
 /* ---- Arm geometry ---------------------------------------------------- *
  * Everything is drawn pointing "up" from the core, then the whole <g> is
@@ -102,43 +100,29 @@ SIGIL.forEach((arm, i) => {
   g.append(hit, stave);
   armsGroup.append(g);
 
-  g.addEventListener("pointerenter", () => showTooltip(i));
-  g.addEventListener("pointerleave", () => hideTooltip(i));
+  g.addEventListener("pointerenter", () => showMagic(i));
+  g.addEventListener("pointerleave", () => hideMagic(i));
   g.addEventListener("click", () => selectArm(i));
 });
 
-/* ---- Tooltip: an arm's "magic" -------------------------------------- */
+/* ---- An arm's "magic": watermark text ghosting in on hover ---------- */
 
-const tooltip = document.getElementById("tooltip");
-const ttIndex = tooltip.querySelector(".tt-index");
-const ttName = tooltip.querySelector(".tt-name");
-const ttIncant = tooltip.querySelector(".tt-incant");
+const magic = document.getElementById("magic");
+const magicName = magic.querySelector(".magic-name");
+const magicIncant = magic.querySelector(".magic-incant");
 
-function armScreenPoint(i, r) {
-  const a = (i * 45) * Math.PI / 180;
-  const p = svg.createSVGPoint();
-  p.x = CX + r * Math.sin(a);
-  p.y = CY - r * Math.cos(a);
-  return p.matrixTransform(svg.getScreenCTM());
-}
-
-function showTooltip(i) {
+function showMagic(i) {
   const arm = SIGIL[i];
   document.querySelector(`.arm[data-index="${i}"]`).classList.add("hovered");
-  ttIndex.textContent = ROMAN[i];
-  ttName.textContent = arm.name;
-  ttIncant.textContent = arm.incant;
-  tooltip.style.setProperty("--accent", arm.accent);
-
-  const pt = armScreenPoint(i, 332);
-  tooltip.style.left = pt.x + "px";
-  tooltip.style.top = pt.y + "px";
-  tooltip.classList.add("show");
+  magicName.textContent = arm.name;
+  magicIncant.textContent = arm.incant;
+  magic.style.setProperty("--accent", arm.accent);
+  magic.classList.add("show");
 }
 
-function hideTooltip(i) {
+function hideMagic(i) {
   document.querySelector(`.arm[data-index="${i}"]`).classList.remove("hovered");
-  tooltip.classList.remove("show");
+  magic.classList.remove("show");
 }
 
 /* ---- Rotating metadata rings ---------------------------------------- */

@@ -13,8 +13,8 @@ rotating slowly in place of the Futhark.
 |---|-----|-------|--------|
 | I | Signal | the thread through noise | cyan |
 | II | Drift | the unplanned route | violet |
-| III | Spark | invention · ignition · him | amber |
-| IV | Mischief | trickster door · you | magenta |
+| III | Spark | invention · ignition | amber |
+| IV | Mischief | trickster door | magenta |
 | V | Storm | confusion · weather · longing | electric blue |
 | VI | Haven | rest · warmth · quiet holding | gold |
 | VII | Crossing | departure · distance · sea & sky | teal |
