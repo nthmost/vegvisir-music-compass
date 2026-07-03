@@ -1,0 +1,8 @@
+# Keep browsers from serving a stale mix of old JS/CSS against new HTML after a
+# redeploy (that mismatch can throw and kill the starfield / interactions).
+# HTML/CSS/JS must revalidate every load; audio can still cache normally.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
