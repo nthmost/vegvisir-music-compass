@@ -74,17 +74,23 @@
       <circle class="frame-ring" cx="500" cy="500" r="452" />
       <circle class="frame-ring" cx="500" cy="500" r="404" />
 
-      <!-- Rotating song metadata (in place of the Futhark) -->
+      <!-- Rotating song metadata (in place of the Futhark) — two instances, 180° apart -->
       <g id="ring">
         <text class="ring-text">
-          <textPath id="ringText" href="#ringPath" startOffset="0%">CHOOSE&#160;YOUR&#160;PATH</textPath>
+          <textPath id="ringText" href="#ringPath" startOffset="0%"></textPath>
+        </text>
+        <text class="ring-text">
+          <textPath id="ringText2" href="#ringPath" startOffset="50%"></textPath>
         </text>
       </g>
 
-      <!-- Counter-rotating inner incantation band, subtler -->
+      <!-- Counter-rotating inner incantation band — two instances, 180° apart -->
       <g id="ringInner">
         <text class="ring-text-inner">
-          <textPath id="ringTextInner" href="#ringPathInner" startOffset="0%">&#160;</textPath>
+          <textPath id="ringTextInner" href="#ringPathInner" startOffset="0%"></textPath>
+        </text>
+        <text class="ring-text-inner">
+          <textPath id="ringTextInner2" href="#ringPathInner" startOffset="50%"></textPath>
         </text>
       </g>
 

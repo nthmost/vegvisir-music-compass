@@ -166,8 +166,10 @@ addEventListener("resize", () => { if (magic.classList.contains("show")) fitName
 
 /* ---- Rotating metadata rings ---------------------------------------- */
 
-const ringText = document.getElementById("ringText");
-const ringTextInner = document.getElementById("ringTextInner");
+const ringText      = document.getElementById("ringText");
+const ringText2     = document.getElementById("ringText2");
+const ringTextInner  = document.getElementById("ringTextInner");
+const ringTextInner2 = document.getElementById("ringTextInner2");
 const SEP = "  ✦  "; // ✦
 
 function repeatToLength(unit, minLen) {
@@ -178,14 +180,12 @@ function repeatToLength(unit, minLen) {
 
 function ringStrings(i) {
   if (i == null) {
-    // Idle state — no English. Irish road-blessing + Old Norse "Farðu heill" in
-    // Younger Futhark runes, each appearing exactly twice around the rings.
+    // Idle state — Irish blessing + Younger Futhark runes, one instance per
+    // textPath (the two textPaths sit at 0% and 50% so they're exactly opposite).
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
-    const outerUnit = "Go n-éirí an bóthar leat" + SEP + norse + SEP;
-    const innerUnit = norse + SEP;
     return {
-      outer: outerUnit + outerUnit,
-      inner: innerUnit + innerUnit,
+      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
+      inner: norse + SEP,
     };
   }
   const s = SIGIL[i].song;
@@ -194,16 +194,19 @@ function ringStrings(i) {
   if (s.album) outerParts.push(s.album);
   if (s.year) outerParts.push(s.year);
 
+  // Each textPath covers one half of the ring — tile just enough to fill that half.
   return {
-    outer: repeatToLength(outerParts.join(SEP) + SEP, 150),   // song metadata rides the outer band
-    inner: repeatToLength(SIGIL[i].incant + SEP, 90),         // the arm's incantation, near the core
+    outer: repeatToLength(outerParts.join(SEP) + SEP, 90),
+    inner: repeatToLength(SIGIL[i].incant + SEP, 35),
   };
 }
 
 function updateRings(i) {
   const { outer, inner } = ringStrings(i);
-  ringText.textContent = outer;
-  ringTextInner.textContent = inner;
+  ringText.textContent      = outer;
+  ringText2.textContent     = outer;
+  ringTextInner.textContent  = inner;
+  ringTextInner2.textContent = inner;
 }
 updateRings(null);
 
