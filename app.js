@@ -11,7 +11,7 @@
    ========================================================================= */
 
 const SIGIL = [
-  { name: "Signal",   incant: "the thread through noise",        accent: "#23e0d4",
+  { name: "Signal",   incant: "beacon · clarity · thread",       accent: "#23e0d4",
     song: { title: "", artist: "", album: "", year: "", file: "audio/1-signal.mp3" } },
 
   { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",

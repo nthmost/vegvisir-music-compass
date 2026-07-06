@@ -11,7 +11,7 @@ rotating slowly in place of the Futhark.
 
 | # | Arm | Magic | Colour |
 |---|-----|-------|--------|
-| I | Signal | the thread through noise | cyan |
+| I | Signal | beacon · clarity · thread | cyan |
 | II | Drift | serendipity · chance | violet |
 | III | Spark | invention · ignition | amber |
 | IV | Mischief | trickster door | magenta |
