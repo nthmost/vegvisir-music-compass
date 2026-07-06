@@ -14,7 +14,7 @@ const SIGIL = [
   { name: "Signal",   incant: "the thread through noise",        accent: "#23e0d4",
     song: { title: "", artist: "", album: "", year: "", file: "audio/1-signal.mp3" } },
 
-  { name: "Drift",    incant: "the unplanned route",             accent: "#8a4dff",
+  { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",
     song: { title: "", artist: "", album: "", year: "", file: "audio/2-drift.mp3" } },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",

@@ -12,7 +12,7 @@ rotating slowly in place of the Futhark.
 | # | Arm | Magic | Colour |
 |---|-----|-------|--------|
 | I | Signal | the thread through noise | cyan |
-| II | Drift | the unplanned route | violet |
+| II | Drift | serendipity · chance | violet |
 | III | Spark | invention · ignition | amber |
 | IV | Mischief | trickster door | magenta |
 | V | Storm | confusion · weather · longing | electric blue |
