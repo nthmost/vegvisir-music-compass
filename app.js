@@ -12,28 +12,28 @@
 
 const SIGIL = [
   { name: "Signal",   incant: "beacon · clarity · thread",       accent: "#23e0d4",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/1-signal.mp3" } },
+    song: { title: "auto orchestra", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/1-signal.mp3" } },
 
   { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/2-drift.mp3" } },
+    song: { title: "owai", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/2-drift.mp3" } },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/3-spark.mp3" } },
+    song: { title: "chromantic", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/3-spark.mp3" } },
 
   { name: "Mischief", incant: "cunning · chaos · games",        accent: "#ff2d95",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/4-mischief.mp3" } },
+    song: { title: "pegel gesetzt", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/4-mischief.mp3" } },
 
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/5-storm.mp3" } },
+    song: { title: "rompatroullie", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/5-storm.mp3" } },
 
   { name: "Haven",    incant: "rest · warmth · respite",         accent: "#f5c542",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/6-haven.mp3" } },
+    song: { title: "1001", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/6-haven.mp3" } },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/7-crossing.mp3" } },
+    song: { title: "subnubus", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/7-crossing.mp3" } },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
-    song: { title: "", artist: "", album: "", year: "", file: "audio/8-return.mp3" } },
+    song: { title: "Vie à l'Envers", artist: "Un Homme", album: "Point d'Infiniti", year: "2018", file: "audio/8-return.mp3" } },
 ];
 
 /* ---- Arm geometry ---------------------------------------------------- *
@@ -184,17 +184,14 @@ function ringStrings(i) {
     };
   }
   const s = SIGIL[i].song;
-  const title = s.title || SIGIL[i].name;
-  const outerParts = [title];
-  const innerParts = [];
-  if (s.artist) innerParts.push(s.artist);
-  if (s.album) innerParts.push(s.album);
-  if (s.year) innerParts.push(s.year);
-  if (!innerParts.length) innerParts.push(SIGIL[i].incant);
+  const outerParts = [s.title || SIGIL[i].name];
+  if (s.artist) outerParts.push(s.artist);
+  if (s.album) outerParts.push(s.album);
+  if (s.year) outerParts.push(s.year);
 
   return {
-    outer: repeatToLength(outerParts.join(SEP) + SEP, 150),
-    inner: repeatToLength(innerParts.join(SEP) + SEP, 90),
+    outer: repeatToLength(outerParts.join(SEP) + SEP, 150),   // song metadata rides the outer band
+    inner: repeatToLength(SIGIL[i].incant + SEP, 90),         // the arm's incantation, near the core
   };
 }
 
