@@ -168,12 +168,11 @@ addEventListener("resize", () => { if (magic.classList.contains("show")) fitName
 
 const ringText      = document.getElementById("ringText");
 const ringText2     = document.getElementById("ringText2");
-const ringTextInner  = document.getElementById("ringTextInner");
-const ringSymbols1   = document.getElementById("ringSymbols1");
-const ringSymbols2   = document.getElementById("ringSymbols2");
+const ringTextInner = document.getElementById("ringTextInner");
 
-// Five distinct nav-panel symbols, em-spaced so they float across the gap.
-const NAV_SYMBOLS = "⊕   ◎   ⊗   ⊙   ◈";
+// Ten individual symbol elements (5 per gap) — one glyph each so positions
+// are exact and the twinkle animation can target them independently.
+const ringSymbolEls = Array.from({length: 10}, (_, i) => document.getElementById(`rSym${i}`));
 const SEP = "  ✦  "; // ✦
 
 function repeatToLength(unit, minLen) {
@@ -207,12 +206,29 @@ function updateRings(i) {
   ringText.textContent      = outer;
   ringText2.textContent     = outer;
   ringTextInner.textContent  = inner;
-  // Symbols only in idle state; cleared when a song is playing.
-  const sym = (i == null) ? NAV_SYMBOLS : "";
-  ringSymbols1.textContent  = sym;
-  ringSymbols2.textContent  = sym;
+  // Show symbols only when idle; hide when a song is loaded.
+  const showSym = (i == null);
+  ringSymbolEls.forEach(el => el.setAttribute("visibility", showSym ? "visible" : "hidden"));
 }
 updateRings(null);
+
+/* ---- Nav symbol twinkle --------------------------------------------- */
+// Each symbol can briefly flash a random palette color, then fade back.
+// Only fires when symbols are visible (idle state).
+
+const TWINKLE_COLORS = [
+  "#ff2d95", "#23e0d4", "#8a4dff", "#ff8a1e",
+  "#f5c542", "#3f7bff", "#12d1c0", "#ff5db1",
+];
+
+(function twinkle() {
+  const el = ringSymbolEls[Math.floor(Math.random() * ringSymbolEls.length)];
+  if (el.getAttribute("visibility") !== "hidden") {
+    el.style.fill = TWINKLE_COLORS[Math.floor(Math.random() * TWINKLE_COLORS.length)];
+    setTimeout(() => { el.style.fill = ""; }, 400 + Math.random() * 700);
+  }
+  setTimeout(twinkle, 500 + Math.random() * 1500);
+})();
 
 /* ---- The core player ------------------------------------------------ */
 

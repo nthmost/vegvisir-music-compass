@@ -149,9 +149,10 @@ html, body {
 }
 #sigil.playing .ring-text { fill: #fff0d0; }
 
-/* Nav symbols: slightly larger than the ring text. */
-.ring-text.ring-symbols {
-  font-size: 34px;
+/* Nav symbols: one element per glyph, slightly larger, smoothly twinkleable. */
+.ring-text.ring-symbol {
+  font-size: 30px;
+  transition: fill 0.45s ease;
 }
 
 .ring-text-inner {
