@@ -178,9 +178,12 @@ function repeatToLength(unit, minLen) {
 
 function ringStrings(i) {
   if (i == null) {
+    // Idle state — no English. Irish road-blessing on the outer band; Old Norse
+    // "Farðu heill" (fare thee well) in Younger Futhark runes echoing on both.
+    const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
-      outer: repeatToLength("VEGVÍSIR" + SEP + "WAYFINDER" + SEP + "CHOOSE YOUR PATH" + SEP, 150),
-      inner: repeatToLength("the way is shown" + SEP, 90),
+      outer: repeatToLength("Go n-éirí an bóthar leat" + SEP + norse + SEP, 150),
+      inner: repeatToLength(norse + SEP, 90),
     };
   }
   const s = SIGIL[i].song;

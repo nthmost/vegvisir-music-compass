@@ -139,7 +139,7 @@ html, body {
 
 .ring-text {
   fill: var(--bronze-lite);
-  font-family: "Cinzel", serif;
+  font-family: "Cinzel", "Noto Sans Runic", serif;
   font-weight: 600;
   font-size: 27px;
   letter-spacing: 5px;
@@ -151,7 +151,7 @@ html, body {
 
 .ring-text-inner {
   fill: var(--cyan);
-  font-family: "Cinzel", serif;
+  font-family: "Cinzel", "Noto Sans Runic", serif;
   font-weight: 400;
   font-size: 17px;
   letter-spacing: 7px;
