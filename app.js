@@ -182,7 +182,7 @@ function ringStrings(i) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
       outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
-      inner: repeatToLength("γνῶθι σεαυτόν" + SEP, 90),
+      inner: ("γνῶθι σεαυτόν" + SEP).repeat(3),
     };
   }
   const s = SIGIL[i].song;
