@@ -168,7 +168,12 @@ addEventListener("resize", () => { if (magic.classList.contains("show")) fitName
 
 const ringText      = document.getElementById("ringText");
 const ringText2     = document.getElementById("ringText2");
-const ringTextInner = document.getElementById("ringTextInner");
+const ringTextInner  = document.getElementById("ringTextInner");
+const ringSymbols1   = document.getElementById("ringSymbols1");
+const ringSymbols2   = document.getElementById("ringSymbols2");
+
+// Five distinct nav-panel symbols, em-spaced so they float across the gap.
+const NAV_SYMBOLS = "⊕   ◎   ⊗   ⊙   ◈";
 const SEP = "  ✦  "; // ✦
 
 function repeatToLength(unit, minLen) {
@@ -181,7 +186,7 @@ function ringStrings(i) {
   if (i == null) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
-      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP + "⊕    ◎    ⊗    ⊙    ◈" + SEP,
+      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
       inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
   }
@@ -199,9 +204,13 @@ function ringStrings(i) {
 
 function updateRings(i) {
   const { outer, inner } = ringStrings(i);
-  ringText.textContent     = outer;
-  ringText2.textContent    = outer;
-  ringTextInner.textContent = inner;
+  ringText.textContent      = outer;
+  ringText2.textContent     = outer;
+  ringTextInner.textContent  = inner;
+  // Symbols only in idle state; cleared when a song is playing.
+  const sym = (i == null) ? NAV_SYMBOLS : "";
+  ringSymbols1.textContent  = sym;
+  ringSymbols2.textContent  = sym;
 }
 updateRings(null);
 
