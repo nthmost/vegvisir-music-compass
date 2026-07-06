@@ -178,12 +178,14 @@ function repeatToLength(unit, minLen) {
 
 function ringStrings(i) {
   if (i == null) {
-    // Idle state — no English. Irish road-blessing on the outer band; Old Norse
-    // "Farðu heill" (fare thee well) in Younger Futhark runes echoing on both.
+    // Idle state — no English. Irish road-blessing + Old Norse "Farðu heill" in
+    // Younger Futhark runes, each appearing exactly twice around the rings.
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
+    const outerUnit = "Go n-éirí an bóthar leat" + SEP + norse + SEP;
+    const innerUnit = norse + SEP;
     return {
-      outer: repeatToLength("Go n-éirí an bóthar leat" + SEP + norse + SEP, 150),
-      inner: repeatToLength(norse + SEP, 90),
+      outer: outerUnit + outerUnit,
+      inner: innerUnit + innerUnit,
     };
   }
   const s = SIGIL[i].song;
