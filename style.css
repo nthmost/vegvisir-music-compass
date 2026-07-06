@@ -151,7 +151,7 @@ html, body {
 
 .ring-text-inner {
   fill: var(--cyan);
-  font-family: "Cinzel", "Noto Sans Runic", serif;
+  font-family: "Cardo", "Cinzel", "Noto Sans Runic", serif;
   font-weight: 400;
   font-size: 17px;
   letter-spacing: 7px;
@@ -258,9 +258,9 @@ html, body {
 #coreElapsed {
   fill: var(--bronze-lite);
   fill-opacity: 0.7;
-  font-family: "Cardo", "Noto Serif", serif;
+  font-family: "Cinzel", serif;
   font-size: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
 }
 
 /* ---- Armed: a song is loaded; the core invites the play tap ---------- */

@@ -182,7 +182,7 @@ function ringStrings(i) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
       outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
-      inner: repeatToLength(norse + SEP, 90),
+      inner: repeatToLength("γνῶθι σεαυτόν" + SEP, 90),
     };
   }
   const s = SIGIL[i].song;
@@ -232,7 +232,6 @@ function armArm(i) {
 
   updateRings(i);
   progressBar.style.strokeDashoffset = CIRC;
-  coreElapsed.textContent = "— · —";
   player.src = SIGIL[i].song.file;
 
   if (TOUCH) showMagic(i);        // reveal the meaning and keep it up
