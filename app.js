@@ -232,6 +232,7 @@ function armArm(i) {
 
   updateRings(i);
   progressBar.style.strokeDashoffset = CIRC;
+  coreElapsed.textContent = "— · —";
   player.src = SIGIL[i].song.file;
 
   if (TOUCH) showMagic(i);        // reveal the meaning and keep it up
