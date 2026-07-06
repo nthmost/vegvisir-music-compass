@@ -14,7 +14,7 @@ rotating slowly in place of the Futhark.
 | I | Signal | beacon · clarity · thread | cyan |
 | II | Drift | serendipity · chance | violet |
 | III | Spark | invention · ignition | amber |
-| IV | Mischief | trickster door | magenta |
+| IV | Mischief | cunning · chaos · games | magenta |
 | V | Storm | confusion · weather · longing | electric blue |
 | VI | Haven | rest · warmth · quiet holding | gold |
 | VII | Crossing | departure · distance · sea & sky | teal |

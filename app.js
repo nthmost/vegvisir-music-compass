@@ -20,7 +20,7 @@ const SIGIL = [
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
     song: { title: "", artist: "", album: "", year: "", file: "audio/3-spark.mp3" } },
 
-  { name: "Mischief", incant: "trickster door",                 accent: "#ff2d95",
+  { name: "Mischief", incant: "cunning · chaos · games",        accent: "#ff2d95",
     song: { title: "", artist: "", album: "", year: "", file: "audio/4-mischief.mp3" } },
 
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
