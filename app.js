@@ -181,7 +181,7 @@ function ringStrings(i) {
   if (i == null) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
-      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP + "⊕  ✶  ⊗  ✶  ⊕" + SEP,
+      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP + "⊕    ◎    ⊗    ⊙    ◈" + SEP,
       inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
   }
