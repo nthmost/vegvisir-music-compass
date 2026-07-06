@@ -168,8 +168,7 @@ addEventListener("resize", () => { if (magic.classList.contains("show")) fitName
 
 const ringText      = document.getElementById("ringText");
 const ringText2     = document.getElementById("ringText2");
-const ringTextInner  = document.getElementById("ringTextInner");
-const ringTextInner2 = document.getElementById("ringTextInner2");
+const ringTextInner = document.getElementById("ringTextInner");
 const SEP = "  ✦  "; // ✦
 
 function repeatToLength(unit, minLen) {
@@ -180,12 +179,10 @@ function repeatToLength(unit, minLen) {
 
 function ringStrings(i) {
   if (i == null) {
-    // Idle state — Irish blessing + Younger Futhark runes, one instance per
-    // textPath (the two textPaths sit at 0% and 50% so they're exactly opposite).
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
       outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
-      inner: norse + SEP,
+      inner: repeatToLength(norse + SEP, 90),
     };
   }
   const s = SIGIL[i].song;
@@ -194,19 +191,17 @@ function ringStrings(i) {
   if (s.album) outerParts.push(s.album);
   if (s.year) outerParts.push(s.year);
 
-  // Each textPath covers one half of the ring — tile just enough to fill that half.
   return {
     outer: repeatToLength(outerParts.join(SEP) + SEP, 90),
-    inner: repeatToLength(SIGIL[i].incant + SEP, 35),
+    inner: repeatToLength(SIGIL[i].incant + SEP, 90),
   };
 }
 
 function updateRings(i) {
   const { outer, inner } = ringStrings(i);
-  ringText.textContent      = outer;
-  ringText2.textContent     = outer;
-  ringTextInner.textContent  = inner;
-  ringTextInner2.textContent = inner;
+  ringText.textContent     = outer;
+  ringText2.textContent    = outer;
+  ringTextInner.textContent = inner;
 }
 updateRings(null);
 
