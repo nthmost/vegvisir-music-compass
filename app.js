@@ -26,7 +26,7 @@ const SIGIL = [
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
     song: { title: "", artist: "", album: "", year: "", file: "audio/5-storm.mp3" } },
 
-  { name: "Haven",    incant: "rest · warmth · quiet holding",   accent: "#f5c542",
+  { name: "Haven",    incant: "rest · warmth · respite",         accent: "#f5c542",
     song: { title: "", artist: "", album: "", year: "", file: "audio/6-haven.mp3" } },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",

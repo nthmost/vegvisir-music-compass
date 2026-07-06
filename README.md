@@ -16,7 +16,7 @@ rotating slowly in place of the Futhark.
 | III | Spark | invention · ignition | amber |
 | IV | Mischief | cunning · chaos · games | magenta |
 | V | Storm | confusion · weather · longing | electric blue |
-| VI | Haven | rest · warmth · quiet holding | gold |
+| VI | Haven | rest · warmth · respite | gold |
 | VII | Crossing | departure · distance · sea & sky | teal |
 | VIII | Return | landfall · homecoming · embrace | pink |
 
