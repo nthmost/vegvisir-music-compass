@@ -82,11 +82,16 @@ function buildStavePath(i) {
 const armsGroup = document.getElementById("arms");
 const svg = document.getElementById("sigil");
 
+/* Desktop has hover; phones don't. On a touch device, tapping an arm reveals
+   its magic and "arms" it, and tapping the glowing core plays it. */
+const TOUCH = matchMedia("(hover: none), (pointer: coarse)").matches;
+
 SIGIL.forEach((arm, i) => {
   const g = document.createElementNS(SVGNS, "g");
   g.setAttribute("class", "arm");
   g.setAttribute("transform", `rotate(${i * 45} ${CX} ${CY})`);
   g.style.setProperty("--accent", arm.accent);
+  g.style.setProperty("--d", (i * 0.15) + "s");   // stagger for the touch "tap me" shimmer
   g.dataset.index = i;
 
   const hit = document.createElementNS(SVGNS, "path");
@@ -100,10 +105,14 @@ SIGIL.forEach((arm, i) => {
   g.append(hit, stave);
   armsGroup.append(g);
 
-  g.addEventListener("pointerenter", () => showMagic(i));
-  g.addEventListener("pointerleave", () => hideMagic(i));
-  g.addEventListener("click", () => selectArm(i));
+  // Mouse: hover reveals, click plays. Touch: tap reveals + arms (core plays).
+  g.addEventListener("pointerenter", () => { if (!TOUCH) showMagic(i); });
+  g.addEventListener("pointerleave", () => { if (!TOUCH) hideMagic(); });
+  g.addEventListener("click", () => (TOUCH ? armArm(i) : playArm(i)));
 });
+
+// On touch there's no hover to signal the arms are alive — shimmer them.
+if (TOUCH) svg.classList.add("hint");
 
 /* ---- An arm's "magic": watermark text ghosting in on hover ---------- */
 
@@ -125,7 +134,11 @@ function fitName() {
   }
 }
 
+let magicTimer;
+
 function showMagic(i) {
+  clearTimeout(magicTimer);
+  document.querySelectorAll(".arm.hovered").forEach((el) => el.classList.remove("hovered"));
   const arm = SIGIL[i];
   document.querySelector(`.arm[data-index="${i}"]`).classList.add("hovered");
   magicName.textContent = arm.name;
@@ -135,9 +148,17 @@ function showMagic(i) {
   magic.classList.add("show");
 }
 
-function hideMagic(i) {
-  document.querySelector(`.arm[data-index="${i}"]`).classList.remove("hovered");
+function hideMagic() {
+  clearTimeout(magicTimer);
+  document.querySelectorAll(".arm.hovered").forEach((el) => el.classList.remove("hovered"));
   magic.classList.remove("show");
+}
+
+// Reveal a name for a few seconds, then fade (used on touch once a song starts;
+// the rotating band carries the song's identity from there).
+function revealFor(i, ms) {
+  showMagic(i);
+  magicTimer = setTimeout(hideMagic, ms);
 }
 
 // Re-fit if the viewport changes while a name is showing (orientation flip).
@@ -189,7 +210,6 @@ updateRings(null);
 const player = document.getElementById("player");
 const progressBar = document.getElementById("progressBar");
 const coreElapsed = document.getElementById("coreElapsed");
-const hint = document.getElementById("hint");
 
 const R_PROG = 130;
 const CIRC = 2 * Math.PI * R_PROG;
@@ -198,9 +218,13 @@ progressBar.style.strokeDashoffset = CIRC;
 
 let current = null;
 
-function selectArm(i) {
+// Load an arm into the core WITHOUT playing: light the arm, aim the rings at it,
+// set the core glowing "armed". On touch a tap does this, so the meaning can be
+// read before committing to a listen.
+function armArm(i) {
+  svg.classList.remove("hint");   // first interaction ends the come-hither shimmer
   current = i;
-  svg.classList.add("has-active");
+  svg.classList.add("has-active", "armed");
   svg.style.setProperty("--active-accent", SIGIL[i].accent);
 
   document.querySelectorAll(".arm").forEach((el) =>
@@ -208,17 +232,28 @@ function selectArm(i) {
 
   updateRings(i);
   progressBar.style.strokeDashoffset = CIRC;
-
   player.src = SIGIL[i].song.file;
+
+  if (TOUCH) showMagic(i);        // reveal the meaning and keep it up
+}
+
+function playCurrent() {
+  if (current == null) return;
   player.play().catch(() => {
-    /* Audio file not present yet — the sigil still lights up and the rings
-       carry the song's name. Drop the file into audio/ to hear it. */
+    /* Audio not present yet — the sigil still lights and the rings carry the
+       song's name. Drop the file into audio/ to hear it. */
   });
 }
 
+// Arm + play together (mouse click, keyboard, auto-advance).
+function playArm(i) {
+  armArm(i);
+  playCurrent();
+}
+
 function togglePlay() {
-  if (current == null) { selectArm(0); return; }   // press the core to begin the journey
-  if (player.paused) player.play().catch(() => {});
+  if (current == null) { TOUCH ? armArm(0) : playArm(0); return; }
+  if (player.paused) playCurrent();
   else player.pause();
 }
 
@@ -235,8 +270,15 @@ core.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); }
 });
 
-player.addEventListener("play", () => svg.classList.add("playing"));
-player.addEventListener("pause", () => svg.classList.remove("playing"));
+player.addEventListener("play", () => {
+  svg.classList.add("playing");
+  svg.classList.remove("armed");
+  if (TOUCH && current != null) revealFor(current, 3200);  // linger, then fade to the band
+});
+player.addEventListener("pause", () => {
+  svg.classList.remove("playing");
+  if (current != null) svg.classList.add("armed");
+});
 
 player.addEventListener("timeupdate", () => {
   const dur = player.duration;
@@ -248,7 +290,7 @@ player.addEventListener("timeupdate", () => {
 
 player.addEventListener("ended", () => {
   svg.classList.remove("playing");
-  selectArm((current + 1) % SIGIL.length);   // Return loops back to Signal — the circle closes
+  playArm((current + 1) % SIGIL.length);   // Return loops back to Signal — the circle closes
 });
 
 /* ---- Keyboard: space toggles, arrows walk the arms ------------------ */
@@ -256,8 +298,8 @@ player.addEventListener("ended", () => {
 document.addEventListener("keydown", (e) => {
   if (e.target === core) return;
   if (e.key === " ") { e.preventDefault(); togglePlay(); }
-  else if (e.key === "ArrowRight") selectArm(current == null ? 0 : (current + 1) % SIGIL.length);
-  else if (e.key === "ArrowLeft")  selectArm(current == null ? 0 : (current + SIGIL.length - 1) % SIGIL.length);
+  else if (e.key === "ArrowRight") playArm(current == null ? 0 : (current + 1) % SIGIL.length);
+  else if (e.key === "ArrowLeft")  playArm(current == null ? 0 : (current + SIGIL.length - 1) % SIGIL.length);
 });
 
 /* ---- Starfield backdrop --------------------------------------------- */

@@ -45,10 +45,21 @@ python3 -m http.server 8080
 
 ## Controls
 
+**Desktop (mouse):**
 - **Hover an arm** → its magic appears.
 - **Click an arm** → plays its song.
-- **Click the core** → play / pause (or, if nothing's chosen yet, begins the journey).
+- **Click the core** → play / pause.
 - **Space** → play / pause · **← / →** → walk between arms.
+
+**Mobile (touch):** there's no hover, so the model is *reveal then play*.
+- On load the arms shimmer once in their colors — a wordless "tap me."
+- **Tap an arm** → its magic appears and stays, and the song loads into the core, which starts glowing in that arm's color.
+- **Tap the glowing core** → plays. Tap another arm to switch. Once a song is
+  playing, the meaning lingers a few seconds, then fades and the rotating band
+  carries the song's identity.
+
+Touch vs mouse is detected via `matchMedia("(hover: none)")`, so each device
+gets the right model automatically.
 
 ## Deploying
 
