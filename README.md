@@ -18,7 +18,7 @@ rotating slowly in place of the Futhark.
 | V | Storm | confusion · weather · longing | electric blue |
 | VI | Haven | rest · warmth · quiet holding | gold |
 | VII | Crossing | departure · distance · sea & sky | teal |
-| VIII | Return | re-entry · the path back | pink |
+| VIII | Return | landfall · homecoming · embrace | pink |
 
 The arc runs Signal → Return, clockwise from the top. When *Return* ends, the
 circle closes back to *Signal*.

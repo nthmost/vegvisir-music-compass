@@ -32,7 +32,7 @@ const SIGIL = [
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
     song: { title: "", artist: "", album: "", year: "", file: "audio/7-crossing.mp3" } },
 
-  { name: "Return",   incant: "re-entry · the path back",        accent: "#ff5db1",
+  { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
     song: { title: "", artist: "", album: "", year: "", file: "audio/8-return.mp3" } },
 ];
 
