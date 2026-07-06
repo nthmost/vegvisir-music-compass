@@ -149,12 +149,9 @@ html, body {
 }
 #sigil.playing .ring-text { fill: #fff0d0; }
 
-/* Nav symbols: larger and vertically centered in the 48-unit band (r=404–452).
-   dominant-baseline:middle puts the em-box center on the path (r=428),
-   giving equal 7px clearance to both frame rings at 34px font size. */
+/* Nav symbols: slightly larger than the ring text. */
 .ring-text.ring-symbols {
   font-size: 34px;
-  dominant-baseline: middle;
 }
 
 .ring-text-inner {
