@@ -273,8 +273,29 @@ const CIRC = 2 * Math.PI * R_PROG;
 progressBar.style.strokeDasharray = CIRC;
 progressBar.style.strokeDashoffset = CIRC;
 
+const AMBIENT = [
+  { title: "Dissolving Time",                          artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-01.m4a" },
+  { title: "Blank",                                    artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-02.m4a" },
+  { title: "Orientations (Above Towns Edit)",          artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-03.m4a" },
+  { title: "Orientations, Pt 2",                       artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-04.m4a" },
+  { title: "Orientations, Pt 3",                       artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-05.m4a" },
+  { title: "Cobalt",                                   artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-06.m4a" },
+  { title: "Fade Away",                                artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-07.m4a" },
+  { title: "Diagrams",                                 artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-08.m4a" },
+  { title: "Something Heavens",                        artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-09.m4a" },
+  { title: "Saturday Barbecue With New Neighbours",    artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-10.m4a" },
+  { title: "auto orchestra",   artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-11.mp3" },
+  { title: "owai",             artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-12.mp3" },
+  { title: "chromantic",       artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-13.mp3" },
+  { title: "pegel gesetzt",    artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-14.mp3" },
+  { title: "rompatroullie",    artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-15.mp3" },
+  { title: "1001",             artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-16.mp3" },
+  { title: "subnubus",         artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-17.mp3" },
+];
+
 let current = null;
 let currentTrack = 0;
+let ambientTrack = null;
 
 // Load an arm into the core WITHOUT playing: light the arm, aim the rings at it,
 // set the core glowing "armed". On touch a tap does this, so the meaning can be
@@ -283,6 +304,7 @@ function armArm(i) {
   svg.classList.remove("hint");   // first interaction ends the come-hither shimmer
   current = i;
   currentTrack = 0;
+  ambientTrack = null;
   svg.classList.add("has-active", "armed");
   svg.style.setProperty("--active-accent", SIGIL[i].accent);
 
@@ -310,8 +332,18 @@ function playArm(i) {
   playCurrent();
 }
 
+function playAmbient() {
+  if (ambientTrack === null) ambientTrack = 0;
+  player.src = AMBIENT[ambientTrack].file;
+  player.play().catch(() => {});
+}
+
 function togglePlay() {
-  if (current == null) { TOUCH ? armArm(0) : playArm(0); return; }
+  if (current == null) {
+    if (player.paused) playAmbient();
+    else player.pause();
+    return;
+  }
   if (player.paused) playCurrent();
   else player.pause();
 }
@@ -349,6 +381,16 @@ player.addEventListener("timeupdate", () => {
 
 player.addEventListener("ended", () => {
   svg.classList.remove("playing");
+  if (current == null) {
+    if (ambientTrack !== null && ambientTrack < AMBIENT.length - 1) {
+      ambientTrack++;
+      player.src = AMBIENT[ambientTrack].file;
+      player.play().catch(() => {});
+    } else {
+      ambientTrack = null;
+    }
+    return;
+  }
   const arm = SIGIL[current];
   if (currentTrack < arm.songs.length - 1) {
     currentTrack++;
