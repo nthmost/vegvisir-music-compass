@@ -12,28 +12,31 @@
 
 const SIGIL = [
   { name: "Signal",   incant: "beacon · clarity · thread",       accent: "#23e0d4",
-    song: { title: "Airwaves", artist: "Thomas Dolby", album: "The Golden Age of Wireless", year: "1982", file: "audio/1-signal.m4a" } },
+    songs: [{ title: "Airwaves", artist: "Thomas Dolby", album: "The Golden Age of Wireless", year: "1982", file: "audio/1-signal.m4a" }] },
 
   { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",
-    song: { title: "Get Confused", artist: "Fischerspooner", album: "Odyssey", year: "2005", file: "audio/2-drift.m4a" } },
+    songs: [{ title: "Get Confused", artist: "Fischerspooner", album: "Odyssey", year: "2005", file: "audio/2-drift.m4a" }] },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
-    song: { title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" } },
+    songs: [{ title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" }] },
 
   { name: "Mischief", incant: "cunning · chaos · games",        accent: "#ff2d95",
-    song: { title: "Elvis is Everywhere", artist: "Mojo Nixon", album: "Bo-Day-Shus!!!", year: "1987", file: "audio/4-mischief.m4a" } },
+    songs: [
+      { title: "Wolf Like Me", artist: "Local H", album: "Awesome Mix Tape #1", year: "2010", file: "audio/4-mischief-1.m4a" },
+      { title: "Elvis is Everywhere", artist: "Mojo Nixon", album: "Bo-Day-Shus!!!", year: "1987", file: "audio/4-mischief-2.m4a" },
+    ] },
 
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
-    song: { title: "Storm on the Sea", artist: "Thompson Twins", album: "Into the Gap", year: "1984", file: "audio/5-storm.m4a" } },
+    songs: [{ title: "Storm on the Sea", artist: "Thompson Twins", album: "Into the Gap", year: "1984", file: "audio/5-storm.m4a" }] },
 
   { name: "Haven",    incant: "rest · warmth · respite",         accent: "#f5c542",
-    song: { title: "Protection", artist: "Massive Attack", album: "Protection", year: "1994", file: "audio/6-haven.m4a" } },
+    songs: [{ title: "Protection", artist: "Massive Attack", album: "Protection", year: "1994", file: "audio/6-haven.m4a" }] },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
-    song: { title: "Ya Bouy", artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing.m4a" } },
+    songs: [{ title: "Ya Bouy", artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing.m4a" }] },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
-    song: { title: "To Someone From a Warm Climate", artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" } },
+    songs: [{ title: "To Someone From a Warm Climate", artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" }] },
 ];
 
 /* ---- Arm geometry ---------------------------------------------------- *
@@ -206,7 +209,7 @@ function ringStrings(i) {
       inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
   }
-  const s = SIGIL[i].song;
+  const s = SIGIL[i].songs[currentTrack];
   const parts = [s.title || SIGIL[i].name];
   if (s.artist) parts.push(s.artist);
   if (s.album)  parts.push(s.album);
@@ -271,6 +274,7 @@ progressBar.style.strokeDasharray = CIRC;
 progressBar.style.strokeDashoffset = CIRC;
 
 let current = null;
+let currentTrack = 0;
 
 // Load an arm into the core WITHOUT playing: light the arm, aim the rings at it,
 // set the core glowing "armed". On touch a tap does this, so the meaning can be
@@ -278,6 +282,7 @@ let current = null;
 function armArm(i) {
   svg.classList.remove("hint");   // first interaction ends the come-hither shimmer
   current = i;
+  currentTrack = 0;
   svg.classList.add("has-active", "armed");
   svg.style.setProperty("--active-accent", SIGIL[i].accent);
 
@@ -286,7 +291,7 @@ function armArm(i) {
 
   updateRings(i);
   progressBar.style.strokeDashoffset = CIRC;
-  player.src = SIGIL[i].song.file;
+  player.src = SIGIL[i].songs[0].file;
 
   if (TOUCH) showMagic(i);        // reveal the meaning and keep it up
 }
@@ -344,7 +349,15 @@ player.addEventListener("timeupdate", () => {
 
 player.addEventListener("ended", () => {
   svg.classList.remove("playing");
-  playArm((current + 1) % SIGIL.length);   // Return loops back to Signal — the circle closes
+  const arm = SIGIL[current];
+  if (currentTrack < arm.songs.length - 1) {
+    currentTrack++;
+    player.src = arm.songs[currentTrack].file;
+    updateRings(current);
+    playCurrent();
+  } else {
+    playArm((current + 1) % SIGIL.length);   // advance to next arm; Return loops to Signal
+  }
 });
 
 /* ---- Keyboard: space toggles, arrows walk the arms ------------------ */
