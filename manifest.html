@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Vegvisir — Manifest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cardo:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #060314;
+      --bg-card:   #0e0824;
+      --bg-card2:  #130930;
+      --border:    rgba(245,197,66,0.18);
+      --gold:      #f5c542;
+      --parchment: #e9dcc3;
+      --dim:       rgba(233,220,195,0.5);
+      --link:      #23e0d4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--parchment);
+      font-family: "Cardo", Georgia, serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 2rem;
+    }
+
+    header h1 {
+      font-family: "Cinzel", serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    header a {
+      font-family: "Cinzel", serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+    header a:hover { opacity: 1; text-decoration: none; }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    section { margin-bottom: 3.5rem; }
+
+    section > h2 {
+      font-family: "Cinzel", serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .arms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 1rem;
+    }
+
+    .arm-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem 1.3rem;
+    }
+
+    .arm-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .arm-name {
+      font-family: "Cinzel", serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .arm-incant {
+      font-style: italic;
+      font-size: 0.82rem;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+    }
+
+    .track-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .track-table td {
+      padding: 0.28rem 0.5rem 0.28rem 0;
+      vertical-align: top;
+    }
+
+    .track-table td:first-child {
+      color: var(--dim);
+      width: 1.6rem;
+      text-align: right;
+      padding-right: 0.7rem;
+      font-size: 0.75rem;
+      padding-top: 0.35rem;
+    }
+
+    .track-title { font-weight: 600; }
+    .track-meta  { color: var(--dim); font-size: 0.82rem; }
+
+    .track-file {
+      font-size: 0.72rem;
+      font-family: "Courier New", monospace;
+      opacity: 0.5;
+      white-space: nowrap;
+    }
+
+    /* Ambient albums */
+    .albums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1rem;
+    }
+
+    .album-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem 1.3rem;
+    }
+
+    .album-header {
+      margin-bottom: 0.75rem;
+    }
+
+    .album-title {
+      font-family: "Cinzel", serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+    }
+
+    .album-artist-year {
+      font-size: 0.82rem;
+      color: var(--dim);
+      margin-top: 0.15rem;
+    }
+
+    .ambient-track-list {
+      list-style: none;
+      font-size: 0.85rem;
+    }
+
+    .ambient-track-list li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.22rem 0;
+      border-top: 1px solid rgba(245,197,66,0.06);
+    }
+
+    .ambient-track-list li:first-child { border-top: none; }
+
+    .at-num {
+      color: var(--dim);
+      font-size: 0.72rem;
+      min-width: 1.6rem;
+      text-align: right;
+      padding-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .at-title { flex: 1; }
+
+    .at-file {
+      font-size: 0.68rem;
+      font-family: "Courier New", monospace;
+      color: var(--link);
+      opacity: 0.65;
+      white-space: nowrap;
+      align-self: center;
+      flex-shrink: 0;
+    }
+    .at-file:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Vegvisir — Manifest</h1>
+  <a href="/">← compass</a>
+</header>
+
+<main>
+  <section id="compass-arms">
+    <h2>Compass Arms</h2>
+    <div class="arms-grid" id="armsGrid"></div>
+  </section>
+
+  <section id="ambient-albums">
+    <h2>Idle · Ambient Albums</h2>
+    <div class="albums-grid" id="albumsGrid"></div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script>
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  // Compass arms
+  const armsGrid = document.getElementById("armsGrid");
+  SIGIL.forEach((arm, idx) => {
+    const tracks = arm.songs.map((s, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>
+          <div class="track-title">${esc(s.title)}</div>
+          <div class="track-meta">${esc(s.artist)}${s.album ? " · " + esc(s.album) : ""}${s.year ? " · " + esc(s.year) : ""}</div>
+          <a class="track-file" href="${esc(s.file)}">${esc(s.file)}</a>
+        </td>
+      </tr>`).join("");
+
+    armsGrid.insertAdjacentHTML("beforeend", `
+      <div class="arm-card">
+        <div class="arm-header">
+          <span class="arm-name" style="color:${esc(arm.accent)}">${esc(arm.name)}</span>
+          <span class="arm-incant">${esc(arm.incant)}</span>
+        </div>
+        <table class="track-table"><tbody>${tracks}</tbody></table>
+      </div>`);
+  });
+
+  // Ambient albums
+  const albumsGrid = document.getElementById("albumsGrid");
+  AMBIENT_ALBUMS.forEach(a => {
+    const tracks = a.tracks.map((t, i) => `
+      <li>
+        <span class="at-num">${i + 1}</span>
+        <span class="at-title">${esc(t.title)}</span>
+        <a class="at-file" href="${esc(t.file)}">${esc(t.file)}</a>
+      </li>`).join("");
+
+    albumsGrid.insertAdjacentHTML("beforeend", `
+      <div class="album-card">
+        <div class="album-header">
+          <div class="album-title">${esc(a.album)}</div>
+          <div class="album-artist-year">${esc(a.artist)}${a.year ? " · " + esc(a.year) : ""}</div>
+        </div>
+        <ul class="ambient-track-list">${tracks}</ul>
+      </div>`);
+  });
+</script>
+
+</body>
+</html>
