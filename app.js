@@ -279,28 +279,59 @@ const CIRC = 2 * Math.PI * R_PROG;
 progressBar.style.strokeDasharray = CIRC;
 progressBar.style.strokeDashoffset = CIRC;
 
-const AMBIENT = [
-  { title: "Dissolving Time",                          artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-01.m4a" },
-  { title: "Blank",                                    artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-02.m4a" },
-  { title: "Orientations (Above Towns Edit)",          artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-03.m4a" },
-  { title: "Orientations, Pt 2",                       artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-04.m4a" },
-  { title: "Orientations, Pt 3",                       artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-05.m4a" },
-  { title: "Cobalt",                                   artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-06.m4a" },
-  { title: "Fade Away",                                artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-07.m4a" },
-  { title: "Diagrams",                                 artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-08.m4a" },
-  { title: "Something Heavens",                        artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-09.m4a" },
-  { title: "Saturday Barbecue With New Neighbours",    artist: "mndtrp", album: "Ephemeris", year: "2015", file: "audio/ambient-10.m4a" },
-  { title: "auto orchestra",   artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-11.mp3" },
-  { title: "owai",             artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-12.mp3" },
-  { title: "chromantic",       artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-13.mp3" },
-  { title: "pegel gesetzt",    artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-14.mp3" },
-  { title: "rompatroullie",    artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-15.mp3" },
-  { title: "1001",             artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-16.mp3" },
-  { title: "subnubus",         artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/ambient-17.mp3" },
+const AMBIENT_ALBUMS = [
+  { album: "Ephemeris", artist: "mndtrp", year: "2015", tracks: [
+    { title: "Dissolving Time",                       file: "audio/ambient-01.m4a" },
+    { title: "Blank",                                 file: "audio/ambient-02.m4a" },
+    { title: "Orientations (Above Towns Edit)",       file: "audio/ambient-03.m4a" },
+    { title: "Orientations, Pt 2",                    file: "audio/ambient-04.m4a" },
+    { title: "Orientations, Pt 3",                    file: "audio/ambient-05.m4a" },
+    { title: "Cobalt",                                file: "audio/ambient-06.m4a" },
+    { title: "Fade Away",                             file: "audio/ambient-07.m4a" },
+    { title: "Diagrams",                              file: "audio/ambient-08.m4a" },
+    { title: "Something Heavens",                     file: "audio/ambient-09.m4a" },
+    { title: "Saturday Barbecue With New Neighbours", file: "audio/ambient-10.m4a" },
+  ]},
+  { album: "Instrumentals", artist: "Mouse on Mars", year: "", tracks: [
+    { title: "auto orchestra", file: "audio/ambient-11.mp3" },
+    { title: "owai",           file: "audio/ambient-12.mp3" },
+    { title: "chromantic",     file: "audio/ambient-13.mp3" },
+    { title: "pegel gesetzt",  file: "audio/ambient-14.mp3" },
+    { title: "rompatroullie",  file: "audio/ambient-15.mp3" },
+    { title: "1001",           file: "audio/ambient-16.mp3" },
+    { title: "subnubus",       file: "audio/ambient-17.mp3" },
+  ]},
+  { album: "Immunity", artist: "Jon Hopkins", year: "2013", tracks: [
+    { title: "We Disappear",                          file: "audio/immunity-01.m4a" },
+    { title: "Open Eye Signal",                       file: "audio/immunity-02.m4a" },
+    { title: "Breathe This Air",                      file: "audio/immunity-03.m4a" },
+    { title: "Collider",                              file: "audio/immunity-04.m4a" },
+    { title: "Abandon Window",                        file: "audio/immunity-05.m4a" },
+    { title: "Form by Firelight",                     file: "audio/immunity-06.m4a" },
+    { title: "Sun Harmonics",                         file: "audio/immunity-07.m4a" },
+    { title: "Immunity",                              file: "audio/immunity-08.m4a" },
+    { title: "Open Eye Signal (Happa remix)",         file: "audio/immunity-09.m4a" },
+    { title: "Open Eye Signal (Lord of the Isles remix)", file: "audio/immunity-10.m4a" },
+    { title: "Open Eye Signal (Luke Abbott remix)",   file: "audio/immunity-11.m4a" },
+    { title: "Open Eye Signal (Nosaj Thing remix)",   file: "audio/immunity-12.m4a" },
+  ]},
+  { album: "Insides", artist: "Jon Hopkins", year: "2008", tracks: [
+    { title: "The Wider Sun",         file: "audio/insides-01.m4a" },
+    { title: "Vessel",                file: "audio/insides-02.m4a" },
+    { title: "Insides",               file: "audio/insides-03.m4a" },
+    { title: "Wire",                  file: "audio/insides-04.m4a" },
+    { title: "Colour Eye",            file: "audio/insides-05.m4a" },
+    { title: "Light Through the Veins", file: "audio/insides-06.m4a" },
+    { title: "The Low Places",        file: "audio/insides-07.m4a" },
+    { title: "Small Memory",          file: "audio/insides-08.m4a" },
+    { title: "A Drifting Up",         file: "audio/insides-09.m4a" },
+    { title: "Autumn Hill",           file: "audio/insides-10.m4a" },
+  ]},
 ];
 
 let current = null;
 let currentTrack = 0;
+let ambientAlbum = null;
 let ambientTrack = null;
 
 // Load an arm into the core WITHOUT playing: light the arm, aim the rings at it,
@@ -310,6 +341,7 @@ function armArm(i) {
   svg.classList.remove("hint");   // first interaction ends the come-hither shimmer
   current = i;
   currentTrack = 0;
+  ambientAlbum = null;
   ambientTrack = null;
   svg.classList.add("has-active", "armed");
   svg.style.setProperty("--active-accent", SIGIL[i].accent);
@@ -339,8 +371,11 @@ function playArm(i) {
 }
 
 function playAmbient() {
-  if (ambientTrack === null) ambientTrack = 0;
-  player.src = AMBIENT[ambientTrack].file;
+  if (ambientAlbum === null) {
+    ambientAlbum = Math.floor(Math.random() * AMBIENT_ALBUMS.length);
+    ambientTrack = 0;
+  }
+  player.src = AMBIENT_ALBUMS[ambientAlbum].tracks[ambientTrack].file;
   player.play().catch(() => {});
 }
 
@@ -388,11 +423,13 @@ player.addEventListener("timeupdate", () => {
 player.addEventListener("ended", () => {
   svg.classList.remove("playing");
   if (current == null) {
-    if (ambientTrack !== null && ambientTrack < AMBIENT.length - 1) {
+    const album = AMBIENT_ALBUMS[ambientAlbum];
+    if (album && ambientTrack < album.tracks.length - 1) {
       ambientTrack++;
-      player.src = AMBIENT[ambientTrack].file;
+      player.src = album.tracks[ambientTrack].file;
       player.play().catch(() => {});
     } else {
+      ambientAlbum = null;
       ambientTrack = null;
     }
     return;
