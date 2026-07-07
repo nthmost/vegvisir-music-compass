@@ -228,7 +228,8 @@ html, body {
 
 /* ---- The core player ------------------------------------------------- */
 
-#core { cursor: pointer; }
+#core { cursor: pointer; outline: none; }
+#core:focus-visible { outline: 2px solid #f5c542; outline-offset: 4px; border-radius: 50%; }
 
 .core-halo {
   fill: none;
