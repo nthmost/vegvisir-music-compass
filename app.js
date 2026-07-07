@@ -355,8 +355,6 @@ player.addEventListener("ended", () => {
     player.src = arm.songs[currentTrack].file;
     updateRings(current);
     playCurrent();
-  } else {
-    playArm((current + 1) % SIGIL.length);   // advance to next arm; Return loops to Signal
   }
 });
 
