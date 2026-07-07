@@ -12,28 +12,28 @@
 
 const SIGIL = [
   { name: "Signal",   incant: "beacon · clarity · thread",       accent: "#23e0d4",
-    song: { title: "auto orchestra", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/1-signal.mp3" } },
+    song: { title: "Airwaves", artist: "Thomas Dolby", album: "The Golden Age of Wireless", year: "1982", file: "audio/1-signal.m4a" } },
 
   { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",
-    song: { title: "owai", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/2-drift.mp3" } },
+    song: { title: "Get Confused", artist: "Fischerspooner", album: "Odyssey", year: "2005", file: "audio/2-drift.m4a" } },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
-    song: { title: "chromantic", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/3-spark.mp3" } },
+    song: { title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" } },
 
   { name: "Mischief", incant: "cunning · chaos · games",        accent: "#ff2d95",
-    song: { title: "pegel gesetzt", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/4-mischief.mp3" } },
+    song: { title: "Elvis is Everywhere", artist: "Mojo Nixon", album: "Bo-Day-Shus!!!", year: "1987", file: "audio/4-mischief.m4a" } },
 
   { name: "Storm",    incant: "confusion · weather · longing",   accent: "#3f7bff",
-    song: { title: "rompatroullie", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/5-storm.mp3" } },
+    song: { title: "Storm on the Sea", artist: "Thompson Twins", album: "Into the Gap", year: "1984", file: "audio/5-storm.m4a" } },
 
   { name: "Haven",    incant: "rest · warmth · respite",         accent: "#f5c542",
-    song: { title: "1001", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/6-haven.mp3" } },
+    song: { title: "Protection", artist: "Massive Attack", album: "Protection", year: "1994", file: "audio/6-haven.m4a" } },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
-    song: { title: "subnubus", artist: "Mouse on Mars", album: "Instrumentals", year: "", file: "audio/7-crossing.mp3" } },
+    song: { title: "Who Am I", artist: "Peace Orchestra", album: "The Animatrix: The Album", year: "2003", file: "audio/7-crossing.m4a" } },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
-    song: { title: "Vie à l'Envers", artist: "Un Homme", album: "Point d'Infiniti", year: "2018", file: "audio/8-return.mp3" } },
+    song: { title: "To Someone From a Warm Climate", artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" } },
 ];
 
 /* ---- Arm geometry ---------------------------------------------------- *
