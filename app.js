@@ -33,7 +33,10 @@ const SIGIL = [
     songs: [{ title: "Protection", artist: "Massive Attack", album: "Protection", year: "1994", file: "audio/6-haven.m4a" }] },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
-    songs: [{ title: "Ya Bouy", artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing.m4a" }] },
+    songs: [
+      { title: "Who Am I", artist: "Peace Orchestra", album: "The Animatrix: The Album", year: "2003", file: "audio/7-crossing-1.m4a" },
+      { title: "Ya Bouy", artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing-2.m4a" },
+    ] },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
     songs: [{ title: "To Someone From a Warm Climate", artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" }] },
