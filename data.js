@@ -24,7 +24,10 @@ const SIGIL = [
     songs: [{ title: "Storm on the Sea", artist: "Thompson Twins", album: "Into the Gap", year: "1984", file: "audio/5-storm.m4a" }] },
 
   { name: "Haven",    incant: "rest · warmth · respite",         accent: "#f5c542",
-    songs: [{ title: "Protection", artist: "Massive Attack", album: "Protection", year: "1994", file: "audio/6-haven.m4a" }] },
+    songs: [
+      { title: "Protection",   artist: "Massive Attack", album: "Protection",  year: "1994", file: "audio/6-haven.m4a" },
+      { title: "Dry the Rain", artist: "The Beta Band",  album: "The Three EPs", year: "1998", file: "audio/6-haven-2.m4a" },
+    ] },
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
     songs: [
