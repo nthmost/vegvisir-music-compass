@@ -62,7 +62,7 @@
 
         <!-- The circular baseline the rotating song metadata rides on -->
         <path id="ringPath"
-              d="M 500,72 A 428,428 0 1 1 500,928 A 428,428 0 1 1 500,72" />
+              d="M 500,85 A 415,415 0 1 1 500,915 A 415,415 0 1 1 500,85" />
         <path id="ringPathInner"
               d="M 500,295 A 205,205 0 1 1 500,705 A 205,205 0 1 1 500,295" />
       </defs>
@@ -72,7 +72,6 @@
 
       <!-- Outer etched rings that frame the runic band -->
       <circle class="frame-ring" cx="500" cy="500" r="452" />
-      <circle class="frame-ring" cx="500" cy="500" r="404" />
 
       <!-- Rotating song metadata (in place of the Futhark) — two instances, 180° apart -->
       <g id="ring">
@@ -85,16 +84,18 @@
         <!-- Nav symbols: one element per symbol so each can twinkle independently.
              Gap 1: 36%–48% (after sentence 1, before sentence 2 at 50%).
              Gap 2: 86%–98% (after sentence 2, before sentence 1 at 0%/100%). -->
-        <text class="ring-text ring-symbol"><textPath id="rSym0" href="#ringPath" startOffset="36%"  text-anchor="middle" dy="8">⊕</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym1" href="#ringPath" startOffset="39%"  text-anchor="middle" dy="8">◎</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym2" href="#ringPath" startOffset="42%"  text-anchor="middle" dy="8">⊗</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym3" href="#ringPath" startOffset="45%"  text-anchor="middle" dy="8">⊙</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym4" href="#ringPath" startOffset="48%"  text-anchor="middle" dy="8">◈</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym5" href="#ringPath" startOffset="86%"  text-anchor="middle" dy="8">⊕</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym6" href="#ringPath" startOffset="89%"  text-anchor="middle" dy="8">◎</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym7" href="#ringPath" startOffset="92%"  text-anchor="middle" dy="8">⊗</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym8" href="#ringPath" startOffset="95%"  text-anchor="middle" dy="8">⊙</textPath></text>
-        <text class="ring-text ring-symbol"><textPath id="rSym9" href="#ringPath" startOffset="98%"  text-anchor="middle" dy="8">◈</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym10" href="#ringPath" startOffset="33%"  text-anchor="middle">⊘</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym0" href="#ringPath" startOffset="36%"  text-anchor="middle">⊕</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym1" href="#ringPath" startOffset="39%"  text-anchor="middle">⊚</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym2" href="#ringPath" startOffset="42%"  text-anchor="middle">⊗</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym3" href="#ringPath" startOffset="45%"  text-anchor="middle">⊙</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym4" href="#ringPath" startOffset="48%"  text-anchor="middle">⊛</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym11" href="#ringPath" startOffset="83%"  text-anchor="middle">⊘</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym5" href="#ringPath" startOffset="86%"  text-anchor="middle">⊕</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym6" href="#ringPath" startOffset="89%"  text-anchor="middle">⊚</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym7" href="#ringPath" startOffset="92%"  text-anchor="middle">⊗</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym8" href="#ringPath" startOffset="95%"  text-anchor="middle">⊙</textPath></text>
+        <text class="ring-text ring-symbol"><textPath id="rSym9" href="#ringPath" startOffset="98%"  text-anchor="middle">⊛</textPath></text>
       </g>
 
       <!-- Counter-rotating inner incantation band, subtler -->

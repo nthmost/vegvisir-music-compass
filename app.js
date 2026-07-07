@@ -172,7 +172,7 @@ const ringTextInner = document.getElementById("ringTextInner");
 
 // Ten individual symbol elements (5 per gap) — one glyph each so positions
 // are exact and the twinkle animation can target them independently.
-const ringSymbolEls = Array.from({length: 10}, (_, i) => document.getElementById(`rSym${i}`));
+const ringSymbolEls = Array.from({length: 12}, (_, i) => document.getElementById(`rSym${i}`));
 const SEP = "  ✦  "; // ✦
 
 function repeatToLength(unit, minLen) {
@@ -185,7 +185,7 @@ function ringStrings(i) {
   if (i == null) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
-      outer: "Go n-éirí an bóthar leat" + SEP + norse + SEP,
+      outer: SEP + "Go n-éirí an bóthar leat" + SEP + norse + SEP,
       inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
   }
