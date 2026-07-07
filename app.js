@@ -196,8 +196,8 @@ function ringStrings(i) {
   if (s.year) outerParts.push(s.year);
 
   return {
-    outer: repeatToLength(outerParts.join(SEP) + SEP, 90),
-    inner: repeatToLength(SIGIL[i].incant + SEP, 90),
+    outer: outerParts.join(SEP),
+    inner: SIGIL[i].incant,
   };
 }
 
