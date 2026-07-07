@@ -34,8 +34,11 @@ const SIGIL = [
 
   { name: "Crossing", incant: "departure · distance · sea & sky", accent: "#12d1c0",
     songs: [
-      { title: "Who Am I", artist: "Peace Orchestra", album: "The Animatrix: The Album", year: "2003", file: "audio/7-crossing-1.m4a" },
-      { title: "Ya Bouy", artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing-2.m4a" },
+      { title: "Crossroads",   artist: "Christopher Larkin", album: "Hollow Knight: Original Soundtrack", year: "2017", file: "audio/7-crossing-1.m4a" },
+      { title: "False Knight", artist: "Christopher Larkin", album: "Hollow Knight: Original Soundtrack", year: "2017", file: "audio/7-crossing-2.m4a" },
+      { title: "Greenpath",    artist: "Christopher Larkin", album: "Hollow Knight: Original Soundtrack", year: "2017", file: "audio/7-crossing-3.m4a" },
+      { title: "Who Am I",     artist: "Peace Orchestra", album: "The Animatrix: The Album", year: "2003", file: "audio/7-crossing-4.m4a" },
+      { title: "Ya Bouy",      artist: "Omar Faruk Tekbilek & Steve Shehan", album: "Random Thoughts", year: "2006", file: "audio/7-crossing-5.m4a" },
     ] },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
