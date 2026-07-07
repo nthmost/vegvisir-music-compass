@@ -175,10 +175,27 @@ const ringTextInner = document.getElementById("ringTextInner");
 const ringSymbolEls = Array.from({length: 12}, (_, i) => document.getElementById(`rSym${i}`));
 const SEP = "  ✦  "; // ✦
 
-function repeatToLength(unit, minLen) {
-  let s = "";
-  while (s.length < minLen) s += unit;
-  return s;
+// Maximum character budget for the outer ring (one copy = half the circumference).
+// Return (69 chars) works; Ya Bouy (75 chars) overlaps — 70 is the safe ceiling.
+const OUTER_MAX = 70;
+
+// Shrink a parts array to fit within max chars when joined by SEP:
+//   1. try full values
+//   2. strip leading articles (The, A, An) from each part
+//   3. iteratively trim the longest part with "…" until it fits
+function shrinkToFit(parts, max) {
+  if (parts.join(SEP).length <= max) return parts.join(SEP);
+
+  const p = parts.map(s => s.replace(/^(the|an?)\s+/i, ""));
+  if (p.join(SEP).length <= max) return p.join(SEP);
+
+  while (p.join(SEP).length > max) {
+    const li = p.reduce((mi, s, i) => s.length > p[mi].length ? i : mi, 0);
+    if (p[li].length <= 2) break;
+    const f = p[li];
+    p[li] = (f.endsWith("…") ? f.slice(0, -2) : f.slice(0, -1)) + "…";
+  }
+  return p.join(SEP);
 }
 
 function ringStrings(i) {
@@ -190,13 +207,13 @@ function ringStrings(i) {
     };
   }
   const s = SIGIL[i].song;
-  const outerParts = [s.title || SIGIL[i].name];
-  if (s.artist) outerParts.push(s.artist);
-  if (s.album) outerParts.push(s.album);
-  if (s.year) outerParts.push(s.year);
+  const parts = [s.title || SIGIL[i].name];
+  if (s.artist) parts.push(s.artist);
+  if (s.album)  parts.push(s.album);
+  if (s.year)   parts.push(s.year);
 
   return {
-    outer: outerParts.join(SEP),
+    outer: shrinkToFit(parts, OUTER_MAX),
     inner: SIGIL[i].incant,
   };
 }
