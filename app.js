@@ -225,9 +225,19 @@ const TWINKLE_COLORS = [
   const el = ringSymbolEls[Math.floor(Math.random() * ringSymbolEls.length)];
   if (el.getAttribute("visibility") !== "hidden") {
     const color = TWINKLE_COLORS[Math.floor(Math.random() * TWINKLE_COLORS.length)];
-    el.style.fill = color;
-    el.style.filter = `drop-shadow(0 0 5px ${color}) drop-shadow(0 0 14px ${color})`;
-    setTimeout(() => { el.style.fill = ""; el.style.filter = ""; }, 400 + Math.random() * 700);
+    el.style.transition = "fill 0.08s ease, filter 0.08s ease";
+    el.style.fill = "#ffffff";
+    el.style.filter = [
+      "drop-shadow(0 0 2px #fff)",
+      `drop-shadow(0 0 8px ${color})`,
+      `drop-shadow(0 0 22px ${color})`,
+      `drop-shadow(0 0 50px ${color})`,
+    ].join(" ");
+    setTimeout(() => {
+      el.style.transition = "fill 0.7s ease, filter 1.1s ease";
+      el.style.fill = "";
+      el.style.filter = "";
+    }, 500 + Math.random() * 800);
   }
   setTimeout(twinkle, 500 + Math.random() * 1500);
 })();
