@@ -175,43 +175,25 @@ const ringTextInner = document.getElementById("ringTextInner");
 const ringSymbolEls = Array.from({length: 12}, (_, i) => document.getElementById(`rSym${i}`));
 const SEP = "  ✦  "; // ✦
 
-const svgEl       = document.getElementById("sigil");
-const ringPathEl  = document.getElementById("ringPath");
-const ringPathInnerEl = document.getElementById("ringPathInner");
-
-// Measure how many SVG units a string occupies at a given CSS class's font.
-function measureText(str, cls) {
-  const tmp = document.createElementNS(SVGNS, "text");
-  tmp.setAttribute("class", cls);
-  tmp.setAttribute("y", "-9999");
-  tmp.setAttribute("visibility", "hidden");
-  tmp.textContent = str;
-  svgEl.appendChild(tmp);
-  const len = tmp.getComputedTextLength();
-  tmp.remove();
-  return len;
-}
-
-// Repeat `str` (with SEP between copies) to fill `pathEl`'s circumference.
-function fillPath(str, pathEl, cls) {
-  const unit    = str + SEP;
-  const unitLen = measureText(unit, cls);
-  const reps    = Math.max(1, Math.floor(pathEl.getTotalLength() / unitLen));
-  return unit.repeat(reps);
+function repeatToLength(unit, minLen) {
+  let s = "";
+  while (s.length < minLen) s += unit;
+  return s;
 }
 
 function ringStrings(i) {
   if (i == null) {
+    const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
     return {
-      outer: "Go n-éirí an bóthar leat" + SEP + "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ",
-      inner: "γνῶθι σεαυτόν",
+      outer: SEP + "Go n-éirí an bóthar leat" + SEP + norse + SEP,
+      inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
   }
   const s = SIGIL[i].song;
   const outerParts = [s.title || SIGIL[i].name];
   if (s.artist) outerParts.push(s.artist);
-  if (s.album)  outerParts.push(s.album);
-  if (s.year)   outerParts.push(s.year);
+  if (s.album) outerParts.push(s.album);
+  if (s.year) outerParts.push(s.year);
 
   return {
     outer: outerParts.join(SEP),
@@ -221,9 +203,9 @@ function ringStrings(i) {
 
 function updateRings(i) {
   const { outer, inner } = ringStrings(i);
-  ringText.textContent      = fillPath(outer, ringPathEl,      "ring-text");
-  ringText2.textContent     = "";
-  ringTextInner.textContent = fillPath(inner, ringPathInnerEl, "ring-text-inner");
+  ringText.textContent      = outer;
+  ringText2.textContent     = outer;
+  ringTextInner.textContent  = inner;
   // Show symbols only when idle; hide when a song is loaded.
   const showSym = (i == null);
   ringSymbolEls.forEach(el => el.setAttribute("visibility", showSym ? "visible" : "hidden"));
