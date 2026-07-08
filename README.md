@@ -66,3 +66,30 @@ gets the right model automatically.
 Static site — bound for a subdomain on **zephyr** (Apache2). Copy the folder to a
 webroot and point an Apache vhost at it. (Deploy steps to be finalized once the
 songs are in and the subdomain is chosen.)
+
+## Performance notes
+
+The app is designed to run on modest hardware (tested on Librem 5). Several
+rendering choices were made specifically to keep the GPU and compositor load low:
+
+**Canvas starfield**
+- `shadowBlur` is not used — it requires a per-pixel blur pass every frame and is
+  the single most expensive canvas operation at 60 fps.
+- Star count is capped at 150 on touch/coarse-pointer devices (vs. 320 on desktop)
+  and the density formula is less aggressive, so the rAF budget is preserved for
+  audio decode.
+
+**CSS animations**
+- The nebula `filter: blur()` is 50 px (was 80 px) — smaller kernel means less GPU
+  work per compositor frame. All three nebula divs carry `will-change: transform`
+  so they get their own compositor layers and their drift animation never touches
+  the main thread.
+- The frame-ring glow is static (no `bifrost` animation). Animating `filter`
+  forces a full GPU repaint each frame; a handpicked midpoint value looks
+  identical in practice.
+- The core breathe and armed-pulse animations use `opacity` instead of
+  `stroke-opacity`. SVG `stroke-opacity` cannot be composited — it forces a
+  repaint every frame. `opacity` on an element IS composited and runs free on the
+  compositor thread.
+- The `armed-pulse` animation drops the `filter` keyframes; only `opacity` pulses.
+  The glow is now a static `drop-shadow` on the element, not a per-frame repaint.

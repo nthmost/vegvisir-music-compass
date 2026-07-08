@@ -49,12 +49,13 @@ html, body {
 .nebula {
   position: fixed;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(50px);
   opacity: 0.55;
   z-index: 0;
   pointer-events: none;
   mix-blend-mode: screen;
   animation: drift 34s ease-in-out infinite alternate;
+  will-change: transform;
 }
 .neb-a {
   width: 60vmax; height: 60vmax;
@@ -118,27 +119,9 @@ html, body {
   stroke-width: 1.8;
   filter:
     drop-shadow(0 0 1px rgba(255, 252, 210, 0.95))
-    drop-shadow(0 0 6px rgba(245, 197, 66, 0.95))
-    drop-shadow(0 0 16px rgba(35, 224, 212, 0.72))
-    drop-shadow(0 0 36px rgba(138, 77, 255, 0.42));
-  animation: bifrost 4.5s ease-in-out infinite;
-}
-
-@keyframes bifrost {
-  0%, 100% {
-    filter:
-      drop-shadow(0 0 1px rgba(255, 252, 210, 0.9))
-      drop-shadow(0 0 6px rgba(245, 197, 66, 0.9))
-      drop-shadow(0 0 16px rgba(35, 224, 212, 0.7))
-      drop-shadow(0 0 36px rgba(138, 77, 255, 0.4));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 2px rgba(255, 255, 255, 1))
-      drop-shadow(0 0 10px rgba(245, 197, 66, 1))
-      drop-shadow(0 0 26px rgba(35, 224, 212, 0.88))
-      drop-shadow(0 0 52px rgba(138, 77, 255, 0.58));
-  }
+    drop-shadow(0 0 8px rgba(245, 197, 66, 0.95))
+    drop-shadow(0 0 20px rgba(35, 224, 212, 0.75))
+    drop-shadow(0 0 44px rgba(138, 77, 255, 0.48));
 }
 
 #ring {
@@ -235,7 +218,7 @@ html, body {
   fill: none;
   stroke: var(--magenta);
   stroke-width: 2;
-  stroke-opacity: 0.35;
+  opacity: 0.35;
   filter: drop-shadow(0 0 16px rgba(255, 45, 149, 0.55));
 }
 .core-disc {
@@ -280,8 +263,8 @@ html, body {
 /* Gentle breathing pulse on the core when idle */
 #core .core-halo { animation: breathe 5.5s ease-in-out infinite; }
 @keyframes breathe {
-  0%, 100% { stroke-opacity: 0.25; }
-  50%      { stroke-opacity: 0.6; }
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 0.6; }
 }
 
 #coreElapsed {
@@ -295,6 +278,7 @@ html, body {
 /* ---- Armed: a song is loaded; the core invites the play tap ---------- */
 #sigil.armed .core-halo {
   stroke: var(--active-accent, var(--magenta));
+  filter: drop-shadow(0 0 16px var(--active-accent, var(--magenta)));
   animation: armed-pulse 1.5s ease-in-out infinite;
 }
 #sigil.armed #glyph path,
@@ -303,8 +287,8 @@ html, body {
   filter: drop-shadow(0 0 14px var(--active-accent, var(--magenta)));
 }
 @keyframes armed-pulse {
-  0%, 100% { stroke-opacity: 0.45; filter: drop-shadow(0 0 8px var(--active-accent, var(--magenta))); }
-  50%      { stroke-opacity: 1;    filter: drop-shadow(0 0 24px var(--active-accent, var(--magenta))); }
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
 }
 
 /* ---- Touch onboarding: a wordless staggered shimmer inviting a tap --- */
@@ -376,12 +360,31 @@ html, body {
 }
 .magic-incant:empty { display: none; }
 
+.magic-download {
+  display: inline-block;
+  margin-top: 1.6em;
+  font-family: "Cinzel", serif;
+  font-size: clamp(0.65rem, 2vmin, 0.95rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent, var(--bronze-lite));
+  text-decoration: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+#magic.show .magic-download {
+  opacity: 0.4;
+  pointer-events: auto;
+}
+.magic-download:hover { opacity: 0.85; }
+
 @media (max-width: 560px) {
   .ring-text { font-size: 30px; letter-spacing: 3px; }
   #tooltip { max-width: 200px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #ring, #ringInner, .nebula, #core .core-halo, .frame-ring,
+  #ring, #ringInner, .nebula, #core .core-halo,
   #sigil.armed .core-halo, #sigil.hint .arm .stave { animation: none; }
 }

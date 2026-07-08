@@ -82,6 +82,7 @@ const magic = document.getElementById("magic");
 const magicInner = magic.querySelector(".magic-inner");
 const magicName = magic.querySelector(".magic-name");
 const magicIncant = magic.querySelector(".magic-incant");
+const magicDownload = document.getElementById("magicDownload");
 
 // Shrink a name to fit its box when it's wider than the space (long words like
 // MISCHIEF / CROSSING on a narrow phone). CSS sizing alone can't guarantee this
@@ -106,6 +107,12 @@ function showMagic(i) {
   magicName.textContent = arm.name;
   magicIncant.textContent = arm.incant;
   magic.style.setProperty("--accent", arm.accent);
+  const trackIdx = (i === current) ? currentTrack : 0;
+  const song = arm.songs[trackIdx];
+  const ext = song.file.match(/\.[^.]+$/)?.[0] ?? ".mp3";
+  const fname = [song.artist, song.title].filter(Boolean).join(" - ") + ext;
+  magicDownload.href = song.file;
+  magicDownload.download = fname;
   fitName();
   magic.classList.add("show");
 }
@@ -127,6 +134,9 @@ function revealFor(i, ms) {
 addEventListener("resize", () => { if (magic.classList.contains("show")) fitName(); });
 
 /* ---- Rotating metadata rings ---------------------------------------- */
+
+let ambientAlbum = null;
+let ambientTrack = null;
 
 const ringText      = document.getElementById("ringText");
 const ringText2     = document.getElementById("ringText2");
@@ -163,10 +173,15 @@ function shrinkToFit(parts, max) {
 function ringStrings(i) {
   if (i == null) {
     const norse = "ᚠᛅᚱᚦᚢ ᚼᛅᛁᛚ";
-    return {
+    const idle = {
       outer: SEP + "Go n-éirí an bóthar leat" + SEP + norse + SEP,
       inner: ("γνῶθι σεαυτόν" + SEP).repeat(4),
     };
+    if (ambientAlbum == null) return idle;
+    const alb = AMBIENT_ALBUMS[ambientAlbum];
+    const label = [alb.artist, alb.album].filter(Boolean).join(SEP);
+    console.log("[vegvisir] ambient ring:", label);
+    return { outer: idle.outer, inner: (label + SEP).repeat(3) };
   }
   const s = SIGIL[i].songs[currentTrack];
   const parts = [s.title || SIGIL[i].name];
@@ -234,8 +249,6 @@ progressBar.style.strokeDashoffset = CIRC;
 
 let current = null;
 let currentTrack = 0;
-let ambientAlbum = null;
-let ambientTrack = null;
 
 // Load an arm into the core WITHOUT playing: light the arm, aim the rings at it,
 // set the core glowing "armed". On touch a tap does this, so the meaning can be
@@ -277,6 +290,7 @@ function playAmbient() {
   if (ambientAlbum === null) {
     ambientAlbum = Math.floor(Math.random() * AMBIENT_ALBUMS.length);
     ambientTrack = 0;
+    updateRings(null);
   }
   player.src = AMBIENT_ALBUMS[ambientAlbum].tracks[ambientTrack].file;
   player.play().catch(() => {});
@@ -334,6 +348,7 @@ player.addEventListener("ended", () => {
     } else {
       ambientAlbum = null;
       ambientTrack = null;
+      updateRings(null);
     }
     return;
   }
@@ -365,7 +380,7 @@ document.addEventListener("keydown", (e) => {
   function seed() {
     w = canvas.width = innerWidth;
     h = canvas.height = innerHeight;
-    const count = Math.min(320, Math.floor((w * h) / 6000));
+    const count = Math.min(TOUCH ? 150 : 320, Math.floor((w * h) / (TOUCH ? 9000 : 6000)));
     stars = Array.from({ length: count }, (_, k) => ({
       x: (Math.sin(k * 12.9898) * 43758.5453 % 1 + 1) % 1 * w,
       y: (Math.sin(k * 78.233) * 12543.988 % 1 + 1) % 1 * h,
@@ -383,8 +398,6 @@ document.addEventListener("keydown", (e) => {
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = `hsla(${s.hue}, 80%, 85%, ${a})`;
-      ctx.shadowBlur = 6;
-      ctx.shadowColor = `hsla(${s.hue}, 90%, 70%, ${a})`;
       ctx.fill();
     }
   }
