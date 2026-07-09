@@ -6,15 +6,17 @@ Usage:
     python3 tools/log_report.py [--log /path/to/access.log] [--out logs/index.html]
 
 Defaults:
-    --log  /var/log/apache2/access.log
+    --log  /var/log/apache2/zs.nthmost.net_access.log
     --out  logs/index.html   (relative to script's parent dir)
 
+Reads the named log plus all rotated siblings (.1, .2.gz, …) automatically.
 Deduplication: (ip, file) requests within a 5-minute window = one play.
 Run via cron for a live-ish report, e.g.:
     */15 * * * * cd /var/www/vegvisir && python3 tools/log_report.py
 """
 
 import argparse
+import gzip
 import re
 import sys
 from collections import defaultdict
@@ -76,28 +78,38 @@ def classify(path):
     return None, None
 
 
+def _open(path):
+    return gzip.open(path, "rt", errors="replace") if str(path).endswith(".gz") else open(path, errors="replace")
+
+
 def parse_log(log_path):
-    """Return list of (ip, file_key, label, dt) for audio plays (200 or 206)."""
+    """Return events from log_path and all rotated siblings (.1, .2.gz, …)."""
+    base = Path(log_path)
+    siblings = sorted(base.parent.glob(base.name + "*"), key=lambda p: p.name)
+    if not siblings:
+        sys.exit(f"No log files found matching {base}*")
+
     events = []
-    try:
-        fh = open(log_path, errors="replace")
-    except OSError as e:
-        sys.exit(f"Cannot open log: {e}")
-    with fh:
-        for line in fh:
-            m = LOG_RE.match(line)
-            if not m:
-                continue
-            status = m.group("status")
-            if status not in ("200", "206"):
-                continue
-            file_key, label = classify(m.group("path"))
-            if file_key is None:
-                continue
-            dt = parse_time(m.group("time"))
-            if dt is None:
-                continue
-            events.append((m.group("ip"), file_key, label, dt))
+    for path in siblings:
+        try:
+            fh = _open(path)
+        except OSError as e:
+            print(f"Warning: skipping {path}: {e}", file=sys.stderr)
+            continue
+        with fh:
+            for line in fh:
+                m = LOG_RE.match(line)
+                if not m:
+                    continue
+                if m.group("status") not in ("200", "206"):
+                    continue
+                file_key, label = classify(m.group("path"))
+                if file_key is None:
+                    continue
+                dt = parse_time(m.group("time"))
+                if dt is None:
+                    continue
+                events.append((m.group("ip"), file_key, label, dt))
     return events
 
 
