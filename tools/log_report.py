@@ -219,7 +219,7 @@ def main():
     here = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--log", default="/var/log/apache2/access.log",
+    parser.add_argument("--log", default="/var/log/apache2/zs.nthmost.net_access.log",
                         help="Apache access log path")
     parser.add_argument("--out", default=str(here / "logs" / "index.html"),
                         help="Output HTML file")
