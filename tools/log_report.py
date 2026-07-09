@@ -11,14 +11,17 @@ Defaults:
 
 Reads the named log plus all rotated siblings (.1, .2.gz, …) automatically.
 Deduplication: (ip, file) requests within a 5-minute window = one play.
+IP labels cached in logs/ip_cache.json; unknown IPs looked up via ip-api.com.
 Run via cron for a live-ish report, e.g.:
     */15 * * * * cd /var/www/vegvisir && python3 tools/log_report.py
 """
 
 import argparse
 import gzip
+import json
 import re
 import sys
+import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,9 +49,93 @@ AMBIENT_ALBUMS = {
     "insides":   ("Jon Hopkins", "Insides"),
 }
 
+# ── IP labelling ──────────────────────────────────────────────────────────────
+
+# ISP substrings that identify the home connection (Sonic fiber, SF).
+HOME_ISP_KEYWORDS = ["sonic telecom", "sonic.net"]
+
+# ISP/org substrings that indicate a mobile carrier.
+MOBILE_KEYWORDS = ["mobile", "wireless", "cellular", "t-mobile", "verizon", "sprint",
+                   "at&t enterprises", "at&t mobility", "dish network"]
+
+# Org substrings that indicate cloud/hosting (likely bots or scanners).
+CLOUD_KEYWORDS = ["digitalocean", "amazon", "google", "linode", "vultr", "ovh",
+                  "hetzner", "cloudflare", "fastly", "akamai", "leaseweb",
+                  "octopus web", "multacom", "choopa", "m247"]
+
+
+def make_label(info):
+    """Turn an ip-api.com result dict into a human-readable location label."""
+    isp     = (info.get("isp")    or "").lower()
+    org     = (info.get("org")    or "").lower()
+    city    = info.get("city",    "")
+    region  = info.get("regionName", "")
+    country = info.get("country", "")
+    cc      = info.get("countryCode", "")
+
+    combined = isp + " " + org
+
+    if any(k in combined for k in HOME_ISP_KEYWORDS):
+        return "home"
+
+    if any(k in combined for k in CLOUD_KEYWORDS):
+        loc = city or country
+        return f"{loc} (cloud)" if loc else "cloud"
+
+    if any(k in combined for k in MOBILE_KEYWORDS):
+        loc = city or country
+        return f"{loc} (mobile)" if loc else "mobile"
+
+    # Regular ISP — show city + state/country
+    if cc == "US":
+        parts = [p for p in [city, region] if p]
+        return ", ".join(parts) if parts else "US"
+
+    parts = [p for p in [city, country] if p]
+    return ", ".join(parts) if parts else cc or "?"
+
+
+def load_cache(cache_path):
+    try:
+        return json.loads(cache_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def save_cache(cache_path, cache):
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(cache, indent=2))
+
+
+def lookup_ips(ips, cache):
+    """Fetch labels for any IPs not already in cache. Updates cache in-place."""
+    unknown = [ip for ip in ips if ip not in cache]
+    if not unknown:
+        return
+
+    # ip-api.com batch: up to 100 per request, free for non-commercial use.
+    BATCH = 100
+    for i in range(0, len(unknown), BATCH):
+        chunk = unknown[i:i + BATCH]
+        body  = json.dumps([{"query": ip} for ip in chunk]).encode()
+        req   = urllib.request.Request(
+            "http://ip-api.com/batch?fields=status,country,countryCode,regionName,city,isp,org,query",
+            data=body, headers={"Content-Type": "application/json"}, method="POST"
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=10) as r:
+                results = json.loads(r.read())
+            for entry in results:
+                ip = entry.get("query", "")
+                if ip:
+                    cache[ip] = make_label(entry) if entry.get("status") == "success" else "?"
+        except Exception as e:
+            print(f"Warning: IP lookup failed: {e}", file=sys.stderr)
+            for ip in chunk:
+                cache.setdefault(ip, "?")
+
 # ── Log parsing ───────────────────────────────────────────────────────────────
 
-# Combined Log Format: ip - - [dd/Mon/yyyy:hh:mm:ss +zone] "METHOD /path HTTP/x" status bytes ...
 LOG_RE = re.compile(
     r'(?P<ip>\S+) \S+ \S+ \[(?P<time>[^\]]+)\] '
     r'"(?:GET|HEAD) (?P<path>[^ "]+) HTTP[^"]*" (?P<status>\d{3})'
@@ -64,12 +151,10 @@ def parse_time(raw):
 
 
 def classify(path):
-    """Return (file_key, label) or None if not an audio request we care about."""
     path = path.lstrip("/").split("?")[0]
     if path in SONGS:
         arm, title, artist = SONGS[path]
         return path, f"{title} — {artist} [{arm}]"
-    # ambient: audio/ambient-01.m4a, audio/immunity-03.m4a, etc.
     m = re.match(r"audio/(ambient|immunity|insides)-\d+\.\w+", path)
     if m:
         key = m.group(1)
@@ -83,7 +168,6 @@ def _open(path):
 
 
 def parse_log(log_path):
-    """Return events from log_path and all rotated siblings (.1, .2.gz, …)."""
     base = Path(log_path)
     siblings = sorted(base.parent.glob(base.name + "*"), key=lambda p: p.name)
     if not siblings:
@@ -114,9 +198,8 @@ def parse_log(log_path):
 
 
 def deduplicate(events, window_minutes=5):
-    """Collapse (ip, file) hits within a window into one play."""
     plays = []
-    last = {}  # (ip, file_key) → last-seen datetime
+    last = {}
     for ip, fkey, label, dt in sorted(events, key=lambda e: e[3]):
         k = (ip, fkey)
         prev = last.get(k)
@@ -134,27 +217,42 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a051a;
 h1 { color: #f5c542; letter-spacing: .08em; margin-bottom: .2em; }
 .meta { color: #888; font-size: .85rem; margin-bottom: 2rem; }
 h2 { color: #23e0d4; border-bottom: 1px solid #23e0d422; padding-bottom: .3em; }
-table { border-collapse: collapse; width: 100%; max-width: 900px; margin-bottom: 2.5rem; }
+table { border-collapse: collapse; width: 100%; max-width: 960px; margin-bottom: 2.5rem; }
 th { text-align: left; color: #f5c542; border-bottom: 1px solid #f5c54244;
      padding: .4em .8em; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; }
 td { padding: .35em .8em; border-bottom: 1px solid #ffffff0d; font-size: .9rem; }
 tr:hover td { background: #ffffff08; }
-.dim { color: #888; font-size: .8rem; }
-.ip  { font-family: monospace; }
+.dim  { color: #888; font-size: .8rem; }
+.ip   { font-family: monospace; color: #a09080; font-size: .8rem; }
+.lbl  { color: #f5c542; font-size: .8rem; }
+.lbl-home   { color: #23e0d4; }
+.lbl-cloud  { color: #555; }
+.lbl-mobile { color: #8a4dff; }
 """
+
 
 def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def build_html(plays, generated_at):
+def lbl_class(label):
+    if label == "home":
+        return "lbl lbl-home"
+    if "(cloud)" in label:
+        return "lbl lbl-cloud"
+    if "(mobile)" in label:
+        return "lbl lbl-mobile"
+    return "lbl"
+
+
+def build_html(plays, ip_cache, generated_at):
     total_plays = len(plays)
-    unique_ips = len({ip for ip, *_ in plays})
+    unique_ips  = len({ip for ip, *_ in plays})
 
     # Per-song stats
     song_stats = defaultdict(lambda: {"plays": 0, "ips": set(), "last": None})
-    for ip, fkey, label, dt in plays:
-        s = song_stats[(fkey, label)]
+    for ip, fkey, slabel, dt in plays:
+        s = song_stats[(fkey, slabel)]
         s["plays"] += 1
         s["ips"].add(ip)
         if s["last"] is None or dt > s["last"]:
@@ -162,10 +260,10 @@ def build_html(plays, generated_at):
 
     # Per-IP stats
     ip_stats = defaultdict(lambda: {"plays": 0, "songs": set(), "last": None})
-    for ip, fkey, label, dt in plays:
+    for ip, fkey, slabel, dt in plays:
         s = ip_stats[ip]
         s["plays"] += 1
-        s["songs"].add(label)
+        s["songs"].add(slabel)
         if s["last"] is None or dt > s["last"]:
             s["last"] = dt
 
@@ -173,9 +271,9 @@ def build_html(plays, generated_at):
         return dt.strftime("%Y-%m-%d %H:%M") if dt else "—"
 
     rows_songs = ""
-    for (fkey, label), s in sorted(song_stats.items(), key=lambda x: -x[1]["plays"]):
+    for (fkey, slabel), s in sorted(song_stats.items(), key=lambda x: -x[1]["plays"]):
         rows_songs += (
-            f"<tr><td>{esc(label)}</td>"
+            f"<tr><td>{esc(slabel)}</td>"
             f"<td>{s['plays']}</td>"
             f"<td>{len(s['ips'])}</td>"
             f"<td class='dim'>{fmt_dt(s['last'])}</td></tr>\n"
@@ -183,9 +281,12 @@ def build_html(plays, generated_at):
 
     rows_ips = ""
     for ip, s in sorted(ip_stats.items(), key=lambda x: -x[1]["plays"]):
+        label    = ip_cache.get(ip, "?")
+        lclass   = lbl_class(label)
         songs_list = "; ".join(sorted(s["songs"]))
         rows_ips += (
-            f"<tr><td class='ip'>{esc(ip)}</td>"
+            f"<tr>"
+            f"<td><span class='ip'>{esc(ip)}</span> <span class='{lclass}'>{esc(label)}</span></td>"
             f"<td>{s['plays']}</td>"
             f"<td class='dim'>{esc(songs_list)}</td>"
             f"<td class='dim'>{fmt_dt(s['last'])}</td></tr>\n"
@@ -214,9 +315,9 @@ def build_html(plays, generated_at):
 {rows_songs}</tbody>
 </table>
 
-<h2>By IP</h2>
+<h2>By visitor</h2>
 <table>
-<thead><tr><th>IP</th><th>Plays</th><th>Songs</th><th>Last seen</th></tr></thead>
+<thead><tr><th>IP · location</th><th>Plays</th><th>Songs</th><th>Last seen</th></tr></thead>
 <tbody>
 {rows_ips}</tbody>
 </table>
@@ -231,21 +332,27 @@ def main():
     here = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--log", default="/var/log/apache2/zs.nthmost.net_access.log",
-                        help="Apache access log path")
-    parser.add_argument("--out", default=str(here / "logs" / "index.html"),
-                        help="Output HTML file")
+    parser.add_argument("--log", default="/var/log/apache2/zs.nthmost.net_access.log")
+    parser.add_argument("--out", default=str(here / "logs" / "index.html"))
+    parser.add_argument("--cache", default=str(here / "logs" / "ip_cache.json"))
     args = parser.parse_args()
 
     events = parse_log(args.log)
     plays  = deduplicate(events)
-    now    = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    html   = build_html(plays, now)
+
+    cache_path = Path(args.cache)
+    cache      = load_cache(cache_path)
+    unique_ips = {ip for ip, *_ in plays}
+    lookup_ips(unique_ips, cache)
+    save_cache(cache_path, cache)
+
+    now  = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    html = build_html(plays, cache, now)
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
-    print(f"Wrote {len(plays)} plays → {out}")
+    print(f"Wrote {len(plays)} plays ({len(unique_ips)} IPs labelled) → {out}")
 
 
 if __name__ == "__main__":
