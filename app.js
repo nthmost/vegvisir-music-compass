@@ -319,6 +319,29 @@ core.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); }
 });
 
+/* ---- Asgardian inner-zone hover glow -------------------------------- */
+
+if (!TOUCH) {
+  let innerGlowActive = false;
+
+  svg.addEventListener("pointermove", (e) => {
+    const rect = svg.getBoundingClientRect();
+    const scale = 1000 / rect.width;
+    const dx = (e.clientX - rect.left) * scale - 500;
+    const dy = (e.clientY - rect.top) * scale - 500;
+    const inZone = dx * dx + dy * dy < 220 * 220;
+    if (inZone !== innerGlowActive) {
+      innerGlowActive = inZone;
+      svg.classList.toggle("inner-glow", inZone);
+    }
+  });
+
+  svg.addEventListener("pointerleave", () => {
+    innerGlowActive = false;
+    svg.classList.remove("inner-glow");
+  });
+}
+
 player.addEventListener("play", () => {
   svg.classList.add("playing");
   svg.classList.remove("armed");

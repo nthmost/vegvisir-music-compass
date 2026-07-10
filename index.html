@@ -60,6 +60,29 @@
           <feComposite in="a" in2="SourceGraphic" operator="in" />
         </filter>
 
+        <!-- Asgardian ring glow: peaks at r=205 (inner text band); r=265 total -->
+        <radialGradient id="asgardRingGrad" cx="500" cy="500" r="265" gradientUnits="userSpaceOnUse">
+          <stop offset="0.00" stop-color="#f5c542" stop-opacity="0" />
+          <stop offset="0.70" stop-color="#f5c542" stop-opacity="0" />
+          <stop offset="0.75" stop-color="#fff5c0" stop-opacity="0.85" />
+          <stop offset="0.78" stop-color="#fffde8" stop-opacity="1.0" />
+          <stop offset="0.81" stop-color="#3f7bff" stop-opacity="0.95" />
+          <stop offset="0.88" stop-color="#8a4dff" stop-opacity="0.72" />
+          <stop offset="0.95" stop-color="#23e0d4" stop-opacity="0.38" />
+          <stop offset="1.00" stop-color="#23e0d4" stop-opacity="0" />
+        </radialGradient>
+
+        <!-- Wide Bifrost bloom: soft halo radiating outward from the ring -->
+        <radialGradient id="asgardBloomGrad" cx="500" cy="500" r="450" gradientUnits="userSpaceOnUse">
+          <stop offset="0.00" stop-color="#f5c542" stop-opacity="0" />
+          <stop offset="0.38" stop-color="#f5c542" stop-opacity="0" />
+          <stop offset="0.46" stop-color="#f5c542" stop-opacity="0.55" />
+          <stop offset="0.53" stop-color="#3f7bff" stop-opacity="0.42" />
+          <stop offset="0.64" stop-color="#8a4dff" stop-opacity="0.26" />
+          <stop offset="0.80" stop-color="#23e0d4" stop-opacity="0.12" />
+          <stop offset="1.00" stop-color="#23e0d4" stop-opacity="0" />
+        </radialGradient>
+
         <!-- The circular baseline the rotating song metadata rides on -->
         <path id="ringPath"
               d="M 500,85 A 415,415 0 1 1 500,915 A 415,415 0 1 1 500,85" />
@@ -96,6 +119,12 @@
         <text class="ring-text ring-symbol"><textPath id="rSym7" href="#ringPath" startOffset="92%"  text-anchor="middle">⊗</textPath></text>
         <text class="ring-text ring-symbol"><textPath id="rSym8" href="#ringPath" startOffset="95%"  text-anchor="middle">⊙</textPath></text>
         <text class="ring-text ring-symbol"><textPath id="rSym9" href="#ringPath" startOffset="98%"  text-anchor="middle">⊛</textPath></text>
+      </g>
+
+      <!-- Asgardian aura: gradient-filled circles that glow from the inner band outward -->
+      <g id="innerAura" pointer-events="none">
+        <circle cx="500" cy="500" r="450" fill="url(#asgardBloomGrad)" />
+        <circle cx="500" cy="500" r="265" fill="url(#asgardRingGrad)" />
       </g>
 
       <!-- Counter-rotating inner incantation band, subtler -->

@@ -168,7 +168,10 @@ html, body {
   letter-spacing: 7px;
   text-transform: uppercase;
   fill-opacity: 0.55;
-  filter: drop-shadow(0 0 5px rgba(35, 224, 212, 0.5));
+  filter:
+    drop-shadow(0 0 3px rgba(245, 197, 66, 0.22))
+    drop-shadow(0 0 5px rgba(35, 224, 212, 0.45));
+  transition: filter 0.8s ease, fill-opacity 0.8s ease;
 }
 
 /* ---- The eight arms -------------------------------------------------- */
@@ -220,15 +223,20 @@ html, body {
   stroke-width: 2;
   opacity: 0.35;
   filter: drop-shadow(0 0 16px rgba(255, 45, 149, 0.55));
+  transition: stroke 0.8s ease, filter 0.8s ease;
 }
 .core-disc {
   filter: drop-shadow(0 0 22px rgba(10, 5, 25, 0.9));
+  transition: filter 0.8s ease;
 }
 .core-rim {
   fill: none;
   stroke: url(#bronzeGrad);
   stroke-width: 4;
-  filter: drop-shadow(0 0 6px rgba(35, 224, 212, 0.4));
+  filter:
+    drop-shadow(0 0 4px rgba(245, 197, 66, 0.22))
+    drop-shadow(0 0 6px rgba(35, 224, 212, 0.35));
+  transition: filter 0.8s ease;
 }
 
 #progressTrack {
@@ -378,6 +386,80 @@ html, body {
   pointer-events: auto;
 }
 .magic-download:hover { opacity: 0.85; }
+
+/* ---- Asgardian inner-zone glow --------------------------------------- */
+
+/* Gradient aura: always-on whisper, blazes on hover.
+   opacity transition handles the fade-in/out; animation only touches filter
+   so they don't conflict. */
+#innerAura {
+  opacity: 0.12;
+  transition: opacity 0.65s ease;
+}
+
+#sigil.inner-glow #innerAura {
+  opacity: 1;
+  animation: bifrost-breathe 3s ease-in-out infinite;
+}
+
+@keyframes bifrost-breathe {
+  0%, 100% { filter: hue-rotate(0deg)    brightness(1.0); }
+  40%       { filter: hue-rotate(25deg)   brightness(1.12); }
+  70%       { filter: hue-rotate(-18deg)  brightness(0.96); }
+}
+
+/* Hover: core rim blazes gold + electric blue */
+#sigil.inner-glow .core-rim {
+  filter:
+    drop-shadow(0 0 8px rgba(255, 250, 200, 1))
+    drop-shadow(0 0 22px rgba(245, 197, 66, 1))
+    drop-shadow(0 0 50px rgba(63, 123, 255, 0.85))
+    drop-shadow(0 0 90px rgba(138, 77, 255, 0.6));
+}
+
+/* Hover: core disc warms */
+#sigil.inner-glow .core-disc {
+  filter:
+    drop-shadow(0 0 22px rgba(10, 5, 25, 0.85))
+    drop-shadow(0 0 18px rgba(245, 197, 66, 0.7))
+    drop-shadow(0 0 50px rgba(63, 123, 255, 0.4));
+}
+
+/* Hover: halo blazes gold, overrides breathe (default state only) */
+#sigil.inner-glow:not(.armed):not(.playing) #core .core-halo {
+  stroke: #e8b840;
+  stroke-width: 3;
+  filter:
+    drop-shadow(0 0 14px rgba(245, 197, 66, 1))
+    drop-shadow(0 0 45px rgba(63, 123, 255, 0.8))
+    drop-shadow(0 0 90px rgba(138, 77, 255, 0.6));
+  animation: asgard-breathe 2.8s ease-in-out infinite;
+}
+
+@keyframes asgard-breathe {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1.0; }
+}
+
+/* Hover: inner ring text shines white-gold */
+#sigil.inner-glow .ring-text-inner {
+  fill: white;
+  fill-opacity: 1;
+  filter:
+    drop-shadow(0 0 4px rgba(255, 255, 220, 1))
+    drop-shadow(0 0 14px rgba(245, 197, 66, 1))
+    drop-shadow(0 0 35px rgba(63, 123, 255, 0.85));
+}
+
+/* Hover: play/pause glyph glows gold */
+#sigil.inner-glow #glyph path,
+#sigil.inner-glow #glyph rect {
+  fill: #fffde8;
+  filter:
+    drop-shadow(0 0 5px rgba(255, 255, 220, 1))
+    drop-shadow(0 0 16px rgba(245, 197, 66, 0.95))
+    drop-shadow(0 0 35px rgba(63, 123, 255, 0.7));
+}
 
 @media (max-width: 560px) {
   .ring-text { font-size: 30px; letter-spacing: 3px; }
