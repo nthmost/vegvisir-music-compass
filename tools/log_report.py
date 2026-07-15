@@ -230,6 +230,36 @@ tr:hover td { background: #ffffff08; }
 .lbl-mobile { color: #8a4dff; }
 .play-entry { line-height: 1.6; }
 .play-entry .dim { display: inline-block; min-width: 11ch; }
+/* ── date slider ── */
+.filter-bar { display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+              background:#0f0820; border:1px solid #ffffff11; border-radius:8px;
+              padding:1rem 1.5rem; margin-bottom:2rem; max-width:960px; }
+.filter-label { color:#f5c542; font-size:.8rem; letter-spacing:.1em;
+                text-transform:uppercase; white-space:nowrap; }
+.slider-wrap { position:relative; flex:1; min-width:180px; height:2.5rem; }
+.slider-track { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
+                height:4px; background:#333; border-radius:2px; }
+.slider-fill  { position:absolute; top:50%; transform:translateY(-50%);
+                height:4px; background:#23e0d4; border-radius:2px; }
+.slider-wrap input[type=range] { position:absolute; left:0; width:100%; height:4px;
+  top:50%; transform:translateY(-50%); appearance:none; -webkit-appearance:none;
+  background:transparent; outline:none; pointer-events:none; }
+.slider-wrap input[type=range]::-webkit-slider-thumb { appearance:none;
+  -webkit-appearance:none; pointer-events:all; width:16px; height:16px;
+  border-radius:50%; background:#f5c542; border:2px solid #0a051a; cursor:pointer; }
+.slider-wrap input[type=range]::-moz-range-thumb { pointer-events:all; width:16px;
+  height:16px; border-radius:50%; background:#f5c542; border:2px solid #0a051a;
+  cursor:pointer; border:none; }
+.slider-dates { font-size:.8rem; color:#aaa; white-space:nowrap; }
+.slider-dates span { display:block; }
+.filter-info  { font-size:.8rem; color:#888; white-space:nowrap; }
+/* ── collapsible play history ── */
+details.play-history { margin-top:.2em; }
+details.play-history summary { color:#888; font-size:.8rem; cursor:pointer;
+  list-style:none; padding:.15em 0; user-select:none; }
+details.play-history summary::-webkit-details-marker { display:none; }
+details.play-history summary::before { content:'▸ '; color:#23e0d4; }
+details.play-history[open] summary::before { content:'▾ '; }
 """
 
 
@@ -252,13 +282,18 @@ def build_html(plays, ip_cache, generated_at):
     unique_ips  = len({ip for ip, *_ in plays})
 
     # Per-song stats
-    song_stats = defaultdict(lambda: {"plays": 0, "ips": set(), "last": None})
+    song_stats = defaultdict(lambda: {"plays": 0, "ips": set(), "last": None, "times": []})
     for ip, fkey, slabel, dt in plays:
         s = song_stats[(fkey, slabel)]
         s["plays"] += 1
         s["ips"].add(ip)
+        s["times"].append(int(dt.timestamp()))
         if s["last"] is None or dt > s["last"]:
             s["last"] = dt
+
+    all_ts = [int(dt.timestamp()) for _, _, _, dt in plays]
+    min_ts = min(all_ts) if all_ts else 0
+    max_ts = max(all_ts) if all_ts else 0
 
     # Per-IP stats
     ip_stats = defaultdict(lambda: {"plays": 0, "events": [], "last": None})
@@ -274,26 +309,44 @@ def build_html(plays, ip_cache, generated_at):
 
     rows_songs = ""
     for (fkey, slabel), s in sorted(song_stats.items(), key=lambda x: -x[1]["plays"]):
+        times_attr = ",".join(str(t) for t in s["times"])
         rows_songs += (
-            f"<tr><td>{esc(slabel)}</td>"
-            f"<td>{s['plays']}</td>"
-            f"<td>{len(s['ips'])}</td>"
+            f"<tr data-times='{times_attr}'>"
+            f"<td>{esc(slabel)}</td>"
+            f"<td class='song-count'>{s['plays']}</td>"
+            f"<td class='song-ips'>{len(s['ips'])}</td>"
             f"<td class='dim'>{fmt_dt(s['last'])}</td></tr>\n"
         )
 
+    COLLAPSE = 5
     rows_ips = ""
     for ip, s in sorted(ip_stats.items(), key=lambda x: -x[1]["plays"]):
         label  = ip_cache.get(ip, "?")
         lclass = lbl_class(label)
-        events_html = "".join(
-            f"<div class='play-entry'><span class='dim'>{fmt_dt(dt)}</span> {esc(slabel)}</div>"
-            for dt, slabel in sorted(s["events"])
-        )
+        events = sorted(s["events"])
+
+        def entry_div(dt, slabel):
+            ts = int(dt.timestamp())
+            return (f"<div class='play-entry' data-ts='{ts}'>"
+                    f"<span class='dim'>{fmt_dt(dt)}</span> {esc(slabel)}</div>")
+
+        visible_entries = "".join(entry_div(dt, sl) for dt, sl in events[:COLLAPSE])
+        if len(events) > COLLAPSE:
+            hidden_entries = "".join(entry_div(dt, sl) for dt, sl in events[COLLAPSE:])
+            history_html = (
+                visible_entries +
+                f"<details class='play-history'>"
+                f"<summary>{len(events) - COLLAPSE} more plays</summary>"
+                f"{hidden_entries}</details>"
+            )
+        else:
+            history_html = visible_entries
+
         rows_ips += (
             f"<tr>"
             f"<td><span class='ip'>{esc(ip)}</span> <span class='{lclass}'>{esc(label)}</span></td>"
-            f"<td>{s['plays']}</td>"
-            f"<td>{events_html}</td>"
+            f"<td class='play-count'>{len(events)}</td>"
+            f"<td>{history_html}</td>"
             f"</tr>\n"
         )
 
@@ -313,19 +366,119 @@ def build_html(plays, ip_cache, generated_at):
   generated {esc(generated_at)}
 </p>
 
+<div class="filter-bar" id="filter-bar" data-min="{min_ts}" data-max="{max_ts}">
+  <span class="filter-label">Date range</span>
+  <div class="slider-wrap">
+    <div class="slider-track"></div>
+    <div class="slider-fill" id="slider-fill"></div>
+    <input type="range" id="r-from" min="0" max="1000" value="0">
+    <input type="range" id="r-to"   min="0" max="1000" value="1000">
+  </div>
+  <div class="slider-dates">
+    <span id="lbl-from"></span>
+    <span id="lbl-to"></span>
+  </div>
+  <span class="filter-info" id="filter-info"></span>
+</div>
+
 <h2>By song</h2>
 <table>
 <thead><tr><th>Song</th><th>Plays</th><th>Unique IPs</th><th>Last played</th></tr></thead>
-<tbody>
+<tbody id="songs-body">
 {rows_songs}</tbody>
 </table>
 
 <h2>By visitor</h2>
 <table>
 <thead><tr><th>IP · location</th><th>Plays</th><th>Play history</th></tr></thead>
-<tbody>
+<tbody id="visitors-body">
 {rows_ips}</tbody>
 </table>
+<script>
+(function(){{
+  var bar    = document.getElementById('filter-bar');
+  var MIN_TS = +bar.dataset.min;
+  var MAX_TS = +bar.dataset.max;
+  var STEPS  = 1000;
+
+  var rFrom  = document.getElementById('r-from');
+  var rTo    = document.getElementById('r-to');
+  var fill   = document.getElementById('slider-fill');
+  var lblFrom = document.getElementById('lbl-from');
+  var lblTo   = document.getElementById('lbl-to');
+  var info    = document.getElementById('filter-info');
+
+  function fmtDate(ts) {{
+    return new Date(ts * 1000).toISOString().slice(0, 10);
+  }}
+  function toTs(v) {{
+    return MIN_TS + (+v / STEPS) * (MAX_TS - MIN_TS);
+  }}
+  function updateFill() {{
+    var lo = +rFrom.value / STEPS * 100;
+    var hi = +rTo.value   / STEPS * 100;
+    fill.style.left  = lo + '%';
+    fill.style.width = (hi - lo) + '%';
+  }}
+
+  function applyFilter() {{
+    var tsFrom = toTs(rFrom.value);
+    var tsTo   = toTs(rTo.value) + 86400;
+    var active = +rFrom.value > 0 || +rTo.value < STEPS;
+
+    lblFrom.textContent = fmtDate(tsFrom);
+    lblTo.textContent   = fmtDate(tsTo - 1);
+    updateFill();
+
+    // visitors table
+    var visTotal = 0;
+    document.querySelectorAll('#visitors-body tr').forEach(function(row) {{
+      var entries = row.querySelectorAll('.play-entry');
+      var count = 0;
+      entries.forEach(function(e) {{
+        var show = +e.dataset.ts >= tsFrom && +e.dataset.ts <= tsTo;
+        e.style.display = show ? '' : 'none';
+        if (show) count++;
+      }});
+      row.querySelector('.play-count').textContent = count;
+      row.style.display = count ? '' : 'none';
+      visTotal += count;
+      // auto-open details when filter finds matches inside them
+      var det = row.querySelector('details.play-history');
+      if (det) {{
+        if (active) {{
+          var hasInside = Array.from(det.querySelectorAll('.play-entry'))
+            .some(function(e) {{ return e.style.display !== 'none'; }});
+          det.open = hasInside;
+        }} else {{
+          det.open = false;
+        }}
+      }}
+    }});
+
+    // songs table
+    document.querySelectorAll('#songs-body tr').forEach(function(row) {{
+      var times = (row.dataset.times || '').split(',').map(Number).filter(Boolean);
+      var count = times.filter(function(t) {{ return t >= tsFrom && t <= tsTo; }}).length;
+      row.querySelector('.song-count').textContent = count;
+      row.style.display = count ? '' : 'none';
+    }});
+
+    info.textContent = active ? visTotal + ' plays in range' : '';
+  }}
+
+  rFrom.addEventListener('input', function() {{
+    if (+rFrom.value >= +rTo.value) rFrom.value = +rTo.value - 1;
+    applyFilter();
+  }});
+  rTo.addEventListener('input', function() {{
+    if (+rTo.value <= +rFrom.value) rTo.value = +rFrom.value + 1;
+    applyFilter();
+  }});
+
+  applyFilter();
+}})();
+</script>
 </body>
 </html>
 """
