@@ -228,6 +228,8 @@ tr:hover td { background: #ffffff08; }
 .lbl-home   { color: #23e0d4; }
 .lbl-cloud  { color: #555; }
 .lbl-mobile { color: #8a4dff; }
+.play-entry { line-height: 1.6; }
+.play-entry .dim { display: inline-block; min-width: 11ch; }
 """
 
 
@@ -259,11 +261,11 @@ def build_html(plays, ip_cache, generated_at):
             s["last"] = dt
 
     # Per-IP stats
-    ip_stats = defaultdict(lambda: {"plays": 0, "songs": set(), "last": None})
+    ip_stats = defaultdict(lambda: {"plays": 0, "events": [], "last": None})
     for ip, fkey, slabel, dt in plays:
         s = ip_stats[ip]
         s["plays"] += 1
-        s["songs"].add(slabel)
+        s["events"].append((dt, slabel))
         if s["last"] is None or dt > s["last"]:
             s["last"] = dt
 
@@ -281,15 +283,18 @@ def build_html(plays, ip_cache, generated_at):
 
     rows_ips = ""
     for ip, s in sorted(ip_stats.items(), key=lambda x: -x[1]["plays"]):
-        label    = ip_cache.get(ip, "?")
-        lclass   = lbl_class(label)
-        songs_list = "; ".join(sorted(s["songs"]))
+        label  = ip_cache.get(ip, "?")
+        lclass = lbl_class(label)
+        events_html = "".join(
+            f"<div class='play-entry'><span class='dim'>{fmt_dt(dt)}</span> {esc(slabel)}</div>"
+            for dt, slabel in sorted(s["events"])
+        )
         rows_ips += (
             f"<tr>"
             f"<td><span class='ip'>{esc(ip)}</span> <span class='{lclass}'>{esc(label)}</span></td>"
             f"<td>{s['plays']}</td>"
-            f"<td class='dim'>{esc(songs_list)}</td>"
-            f"<td class='dim'>{fmt_dt(s['last'])}</td></tr>\n"
+            f"<td>{events_html}</td>"
+            f"</tr>\n"
         )
 
     return f"""<!DOCTYPE html>
@@ -317,7 +322,7 @@ def build_html(plays, ip_cache, generated_at):
 
 <h2>By visitor</h2>
 <table>
-<thead><tr><th>IP · location</th><th>Plays</th><th>Songs</th><th>Last seen</th></tr></thead>
+<thead><tr><th>IP · location</th><th>Plays</th><th>Play history</th></tr></thead>
 <tbody>
 {rows_ips}</tbody>
 </table>
