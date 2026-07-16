@@ -4,3 +4,7 @@ audio/*
 !audio/README.txt
 
 .DS_Store
+
+# Runtime-generated log report output and IP lookup cache
+logs/*.html
+logs/*.json
