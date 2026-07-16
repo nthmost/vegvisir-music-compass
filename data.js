@@ -15,10 +15,7 @@ const SIGIL = [
     ] },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
-    songs: [
-      { title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" },
-      { title: "Less",     artist: "Haujobb",                    album: "Less",                      year: "1998", file: "audio/3-spark-2.m4a" },
-    ] },
+    songs: [{ title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" }] },
 
   { name: "Mischief", incant: "cunning · chaos · games",        accent: "#ff2d95",
     songs: [
