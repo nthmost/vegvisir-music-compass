@@ -43,7 +43,10 @@ const SIGIL = [
     ] },
 
   { name: "Return",   incant: "landfall · homecoming · embrace", accent: "#ff5db1",
-    songs: [{ title: "To Someone From a Warm Climate", artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" }] },
+    songs: [
+      { title: "To Someone From a Warm Climate",    artist: "Hozier", album: "Unreal Unearth", year: "2023", file: "audio/8-return.m4a" },
+      { title: "Insanely Beautiful (Leah's Mix)", artist: "Fluke",  album: "Insanely Beautiful", year: "1997", file: "audio/8-return-2.m4a" },
+    ] },
 ];
 
 const AMBIENT_ALBUMS = [
