@@ -9,7 +9,10 @@ const SIGIL = [
     songs: [{ title: "Airwaves", artist: "Thomas Dolby", album: "The Golden Age of Wireless", year: "1982", file: "audio/1-signal.m4a" }] },
 
   { name: "Drift",    incant: "serendipity · chance",            accent: "#8a4dff",
-    songs: [{ title: "Get Confused", artist: "Fischerspooner", album: "Odyssey", year: "2005", file: "audio/2-drift.m4a" }] },
+    songs: [
+      { title: "Get Confused", artist: "Fischerspooner", album: "Odyssey", year: "2005", file: "audio/2-drift.m4a" },
+      { title: "Yekte",        artist: "Seren Saraç",    album: "YEKTE",   year: "2026", file: "audio/2-drift-2.m4a" },
+    ] },
 
   { name: "Spark",    incant: "invention · ignition",           accent: "#ff8a1e",
     songs: [{ title: "The Grid", artist: "Daft Punk & Crystal Method", album: "TRON: Legacy R3C0NF1GUR3D", year: "2011", file: "audio/3-spark.m4a" }] },
