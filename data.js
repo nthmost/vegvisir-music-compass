@@ -50,7 +50,7 @@ const SIGIL = [
 ];
 
 const AMBIENT_ALBUMS = [
-  { album: "Ephemeris", artist: "mndtrp", year: "2015", tracks: [
+  { album: "Ephemeris", artist: "H.U.V.A. Network", year: "2015", tracks: [
     { title: "Dissolving Time",                       file: "audio/ambient-01.m4a" },
     { title: "Blank",                                 file: "audio/ambient-02.m4a" },
     { title: "Orientations (Above Towns Edit)",       file: "audio/ambient-03.m4a" },
